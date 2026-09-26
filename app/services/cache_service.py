@@ -70,14 +70,17 @@ def hash_signal(signal: list[float]) -> str:
 
 
 async def get_cached_result(signal_hash: str) -> dict[str, Any] | None:
-    """Return cached screening result dict, or None on cache miss."""
+    """Return cached screening result dict, or None on cache miss or when Redis is offline."""
     key = _make_cache_key(signal_hash)
-    client = get_redis_client()
-    raw = await client.get(key)
-    if raw is not None:
-        CACHE_HITS.labels(operation="screening_result").inc()
-        return json.loads(raw)
-    CACHE_MISSES.labels(operation="screening_result").inc()
+    try:
+        client = get_redis_client()
+        raw = await client.get(key)
+        if raw is not None:
+            CACHE_HITS.labels(operation="screening_result").inc()
+            return json.loads(raw)
+        CACHE_MISSES.labels(operation="screening_result").inc()
+    except Exception as exc:
+        logger.debug("Redis cache get skipped", error=str(exc))
     return None
 
 
@@ -86,12 +89,15 @@ async def cache_result(
     result: dict[str, Any],
     ttl: int | None = None,
 ) -> None:
-    """Store a screening result dict in Redis."""
+    """Store a screening result dict in Redis (best-effort)."""
     key = _make_cache_key(signal_hash)
-    client = get_redis_client()
-    ttl = ttl or settings.result_cache_ttl
-    await client.setex(key, ttl, json.dumps(result, default=str))
-    logger.debug("Cached screening result", key=key, ttl=ttl)
+    try:
+        client = get_redis_client()
+        ttl = ttl or settings.result_cache_ttl
+        await client.setex(key, ttl, json.dumps(result, default=str))
+        logger.debug("Cached screening result", key=key, ttl=ttl)
+    except Exception as exc:
+        logger.debug("Redis cache store skipped", error=str(exc))
 
 
 # ── Job State ─────────────────────────────────────────────────────────────────
