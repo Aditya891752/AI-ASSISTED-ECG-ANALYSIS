@@ -19,6 +19,7 @@ Opens the app at **http://localhost:5173** automatically.
 docker-compose up --build
 # Open http://localhost:3000
 ```
+**API Docs** — open http://localhost:8000/docs for the judges
 
 ---
 
