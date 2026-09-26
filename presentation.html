@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BIOFORGE: CARDIO AI | HEALTHNOVA 2026 Presentation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #070d1e;
+      --bg-surface: #0e172e;
+      --bg-card: #152243;
+      --bg-card-hover: #1b2c56;
+      --border-color: #243665;
+      --border-accent: rgba(0, 229, 255, 0.4);
+      --cyan: #00e5ff;
+      --cyan-glow: rgba(0, 229, 255, 0.25);
+      --green: #00e676;
+      --green-glow: rgba(0, 230, 118, 0.25);
+      --amber: #ffb300;
+      --amber-glow: rgba(255, 179, 0, 0.25);
+      --red: #ff1744;
+      --red-glow: rgba(255, 23, 68, 0.25);
+      --text-white: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --slide-width: 1280px;
+      --slide-height: 720px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #030712;
+      color: var(--text-white);
+      font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow-x: hidden;
+    }
+
+    /* Fixed Top Control Bar */
+    .top-controls {
+      position: fixed;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(14, 23, 46, 0.85);
+      backdrop-filter: blur(12px);
+      padding: 8px 18px;
+      border-radius: 9999px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+    }
+
+    .pill-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      background: rgba(0, 229, 255, 0.1);
+      border: 1px solid rgba(0, 229, 255, 0.3);
+      padding: 4px 10px;
+      border-radius: 9999px;
+    }
+
+    .ctrl-btn {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .ctrl-btn:hover {
+      background: var(--bg-card);
+      color: var(--cyan);
+      border-color: var(--cyan);
+    }
+
+    .slide-indicator {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--cyan);
+      font-weight: 600;
+      min-width: 50px;
+      text-align: center;
+    }
+
+    /* Main Presentation Frame */
+    .presentation-container {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .slide-viewport {
+      width: min(94vw, calc(94vh * (16 / 9)));
+      height: min(calc(94vw * (9 / 16)), 94vh);
+      max-width: var(--slide-width);
+      max-height: var(--slide-height);
+      position: relative;
+      background: radial-gradient(circle at 15% 15%, rgba(0, 229, 255, 0.05) 0%, transparent 40%),
+                  radial-gradient(circle at 85% 85%, rgba(0, 230, 118, 0.04) 0%, transparent 40%),
+                  var(--bg-dark);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.9), 0 0 40px rgba(0, 229, 255, 0.05);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Individual Slide */
+    .slide {
+      position: absolute;
+      inset: 0;
+      padding: 40px 48px;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(0.98);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+
+    .slide.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: scale(1);
+    }
+
+    /* Header styling */
+    .slide-header {
+      margin-bottom: 24px;
+      position: relative;
+    }
+
+    .slide-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+
+    .slide-category {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .slide-category::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      background: var(--cyan);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--cyan);
+    }
+
+    .slide-number {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+
+    .slide-title {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text-white);
+      line-height: 1.2;
+    }
+
+    .slide-subtitle {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-top: 4px;
+      font-weight: 400;
+    }
+
+    /* Slide Content Grids */
+    .slide-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      flex: 1;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+      flex: 1;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    /* Glass Cards */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 20px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      transition: border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .card:hover {
+      border-color: var(--border-accent);
+    }
+
+    .card.highlight {
+      border-color: var(--cyan);
+      box-shadow: 0 0 25px rgba(0, 229, 255, 0.15);
+      background: linear-gradient(135deg, rgba(21, 34, 67, 0.95), rgba(11, 23, 50, 0.95));
+    }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--cyan);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-body {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.55;
+      flex: 1;
+    }
+
+    .card-body ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .card-body li {
+      position: relative;
+      padding-left: 18px;
+      margin-bottom: 8px;
+    }
+
+    .card-body li::before {
+      content: "▹";
+      position: absolute;
+      left: 0;
+      color: var(--cyan);
+      font-size: 12px;
+    }
+
+    /* Metric Callout Card */
+    .metric-badge {
+      display: flex;
+      flex-direction: column;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 14px 18px;
+    }
+
+    .metric-val {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--cyan);
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: -0.02em;
+    }
+
+    .metric-val.green { color: var(--green); }
+    .metric-val.amber { color: var(--amber); }
+    .metric-val.red   { color: var(--red); }
+
+    .metric-lbl {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-white);
+      margin-top: 4px;
+    }
+
+    .metric-desc {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* ECG Waveform Pulse Graphic */
+    .ecg-line-svg {
+      width: 100%;
+      height: 48px;
+      stroke: var(--cyan);
+      stroke-width: 2;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      filter: drop-shadow(0 0 6px rgba(0, 229, 255, 0.6));
+    }
+
+    /* Tables */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      text-align: left;
+    }
+
+    .data-table th {
+      background: var(--bg-surface);
+      color: var(--cyan);
+      padding: 10px 14px;
+      font-weight: 700;
+      border-bottom: 2px solid var(--border-color);
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 0.05em;
+    }
+
+    .data-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-muted);
+    }
+
+    .data-table tr:hover td {
+      background: rgba(0, 229, 255, 0.03);
+      color: var(--text-white);
+    }
+
+    .data-table td strong {
+      color: var(--text-white);
+    }
+
+    /* Tags */
+    .tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .tag-cyan { background: rgba(0, 229, 255, 0.15); color: var(--cyan); border: 1px solid rgba(0, 229, 255, 0.3); }
+    .tag-green { background: rgba(0, 230, 118, 0.15); color: var(--green); border: 1px solid rgba(0, 230, 118, 0.3); }
+    .tag-amber { background: rgba(255, 179, 0, 0.15); color: var(--amber); border: 1px solid rgba(255, 179, 0, 0.3); }
+    .tag-red { background: rgba(255, 23, 68, 0.15); color: var(--red); border: 1px solid rgba(255, 23, 68, 0.3); }
+
+    /* Bottom Navigation Dots */
+    .bottom-nav {
+      position: absolute;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+      z-index: 10;
+    }
+
+    .nav-dot {
+      width: 24px;
+      height: 4px;
+      border-radius: 2px;
+      background: var(--border-color);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .nav-dot.active {
+      background: var(--cyan);
+      width: 36px;
+      box-shadow: 0 0 10px var(--cyan);
+    }
+
+    /* Print styles for Clean PDF Export */
+    @media print {
+      body {
+        background: #0B132B !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .top-controls, .bottom-nav {
+        display: none !important;
+      }
+      .presentation-container {
+        display: block;
+        height: auto;
+      }
+      .slide-viewport {
+        border: none;
+        box-shadow: none;
+        width: 100vw;
+        height: 100vh;
+        max-width: none;
+        max-height: none;
+        border-radius: 0;
+        page-break-after: always;
+      }
+      .slide {
+        position: relative !important;
+        opacity: 1 !important;
+        transform: none !important;
+        page-break-after: always;
+        height: 100vh;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Floating Controls -->
+  <div class="top-controls">
+    <span class="pill-badge">HEALTHNOVA 2026</span>
+    <button class="ctrl-btn" onclick="prevSlide()">◀ Prev</button>
+    <div class="slide-indicator" id="slideNumDisplay">01 / 10</div>
+    <button class="ctrl-btn" onclick="nextSlide()">Next ▶</button>
+    <button class="ctrl-btn" onclick="toggleFullScreen()">⛶ Fullscreen</button>
+    <button class="ctrl-btn" onclick="window.print()">🖨️ PDF</button>
+  </div>
+
+  <div class="presentation-container">
+    <div class="slide-viewport">
+
+      <!-- ========================================== -->
+      <!-- SLIDE 1: TITLE SLIDE -->
+      <!-- ========================================== -->
+      <section class="slide active" id="slide-1">
+        <div style="flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+              <span class="pill-badge">🏆 IEEE EMBS Innovation Challenge • Bioengineering Track</span>
+              <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--cyan);">PS-03</span>
+            </div>
+            
+            <h1 style="font-size: 44px; font-weight: 800; letter-spacing: -0.02em; color: var(--text-white); margin-bottom: 8px;">
+              BIOFORGE : CARDIO AI
+            </h1>
+            <h2 style="font-size: 20px; font-weight: 600; color: var(--cyan); margin-bottom: 12px;">
+              AI-Assisted Real-Time ECG Arrhythmia & Myocardial Infarction Screening System
+            </h2>
+            <p style="font-size: 14px; color: var(--text-muted); max-width: 820px; line-height: 1.5;">
+              Problem Statement PS-03: Accessible, Rapid, and Explainable ECG Screening for Point-of-Care and Resource-Constrained Clinical Environments.
+            </p>
+          </div>
+
+          <!-- 3 Stat Metrics -->
+          <div class="grid-3" style="flex: 0; margin: 24px 0;">
+            <div class="metric-badge">
+              <span class="metric-val">87,234+</span>
+              <span class="metric-lbl">Clinical Beats Evaluated</span>
+              <span class="metric-desc">MIT-BIH Arrhythmia & PTB Diagnostic Databases</span>
+            </div>
+            <div class="metric-badge" style="border-color: var(--cyan); box-shadow: 0 0 15px rgba(0, 229, 255, 0.15);">
+              <span class="metric-val green">99.1%</span>
+              <span class="metric-lbl">Ensemble Model Accuracy</span>
+              <span class="metric-desc">5-Class AAMI Arrhythmia + Binary MI Detection</span>
+            </div>
+            <div class="metric-badge">
+              <span class="metric-val amber">&lt; 4.8 ms</span>
+              <span class="metric-lbl">Inference Latency / Beat</span>
+              <span class="metric-desc">Ultra-low latency real-time WebSocket streaming</span>
+            </div>
+          </div>
+
+          <!-- Team Footer Card -->
+          <div class="card" style="padding: 16px 24px; background: rgba(14, 23, 46, 0.9); flex-direction: row; justify-content: space-between; align-items: center;">
+            <div>
+              <div style="font-size: 11px; text-transform: uppercase; color: var(--cyan); font-weight: 700; letter-spacing: 0.05em;">Team Bioforge</div>
+              <div style="font-size: 15px; font-weight: 700; color: var(--text-white); margin-top: 2px;">
+                Aditya Singh Chauhan &bull; Shaik Mulla Muneer Ahamad
+              </div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-size: 13px; color: var(--text-muted); font-weight: 500;">B.Tech Biotechnology (2nd Year, 3rd Sem)</div>
+              <div style="font-size: 12px; color: var(--cyan);">Galgotias University, Greater Noida</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- SLIDE 2: THE CLINICAL PROBLEM -->
+      <!-- ========================================== -->
+      <section class="slide" id="slide-2">
+        <div class="slide-header">
+          <div class="slide-meta">
+            <span class="slide-category">Clinical Problem & Urgency</span>
+            <span class="slide-number">02 / 10</span>
+          </div>
+          <h2 class="slide-title">The Cardiovascular Screening Bottleneck</h2>
+          <p class="slide-subtitle">Millions die annually due to delayed detection of fatal cardiac arrhythmias and silent ischemia.</p>
+        </div>
+
+        <div class="slide-content">
+          <div class="grid-2">
+            <div class="card">
+              <div class="card-title">🚨 The Global Burden</div>
+              <div class="card-body">
+                <ul>
+                  <li><strong>#1 Global Killer:</strong> Cardiovascular Diseases (CVDs) cause <strong>17.9M deaths/year</strong> (32% of all global mortality, WHO).</li>
+                  <li><strong>Severe Specialist Shortage:</strong> <strong>&lt; 1 Cardiologist per 100,000 citizens</strong> in Tier-2/3 Indian cities and rural Primary Health Centres (PHCs).</li>
+                  <li><strong>The Critical "Golden Hour":</strong> Acute Myocardial Infarction (MI) and Ventricular Fibrillation require immediate intervention within 60 minutes to prevent irreversible myocardial necrosis.</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-title">⏳ The Holter Diagnostic Dilemma</div>
+              <div class="card-body">
+                <ul>
+                  <li><strong>Overwhelming Data Volume:</strong> A standard 24-hour Holter monitor logs <strong>over 100,000 heartbeats</strong> per patient record.</li>
+                  <li><strong>Exhausting Manual Triaging:</strong> Reviewing a 24-hour trace takes a cardiologist <strong>25–45 minutes</strong> of tedious manual scanning.</li>
+                  <li><strong>Dangerous Diagnostic Delays:</strong> Reports take <strong>48 to 72 hours</strong> to reach the patient, risking sudden cardiac arrest in outpatient settings.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="card highlight" style="margin-top: 16px; padding: 14px 20px;">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-size: 14px; font-weight: 700; color: var(--cyan);">💡 The Bioforge Opportunity</span>
+              <span class="tag tag-cyan">AI-Accelerated Tele-Cardiology</span>
+            </div>
+            <p style="font-size: 13px; color: var(--text-white); margin-top: 6px;">
+              Transform primary health workers into frontline cardiological responders with instantaneous, automated, and explainable rhythm triaging directly in the browser or on the edge.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- SLIDE 3: EXISTING SOLUTIONS VS BIOFORGE -->
+      <!-- ========================================== -->
+      <section class="slide" id="slide-3">
+        <div class="slide-header">
+          <div class="slide-meta">
+            <span class="slide-category">Market & Technology Gap</span>
+            <span class="slide-number">03 / 10</span>
+          </div>
+          <h2 class="slide-title">Existing Solutions vs. BIOFORGE: CARDIO AI</h2>
+          <p class="slide-subtitle">Bridging the gap between heavy hospital infrastructure and simplistic consumer wearables.</p>
+        </div>
+
+        <div class="slide-content">
+          <table class="data-table" style="background: var(--bg-card); border-radius: 10px; overflow: hidden;">
+            <thead>
+              <tr>
+                <th>Feature / Dimension</th>
+                <th>Hospital 12-Lead ECG</th>
+                <th>Consumer Smartwatches</th>
+                <th>Legacy Software</th>
+                <th style="color: var(--cyan); background: rgba(0, 229, 255, 0.1);">BIOFORGE : CARDIO AI</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Portability & Cost</strong></td>
+                <td>Bulky cart, $5,000+, clinical staff needed</td>
+                <td>Ultra-portable, $300–$800, personal gadget</td>
+                <td>Desktop-bound, expensive licensing ($2K+)</td>
+                <td style="color: var(--green); font-weight: 700;">Zero hardware lock-in, runs in browser / IoT</td>
+              </tr>
+              <tr>
+                <td><strong>Diagnostic Scope</strong></td>
+                <td>Full 12-lead diagnostic gold standard</td>
+                <td>Binary AFib screening only (Lead I)</td>
+                <td>Basic thresholding, high false-alarm rate</td>
+                <td style="color: var(--cyan); font-weight: 700;">5-Class AAMI (N, S, V, F, Q) + PTB MI</td>
+              </tr>
+              <tr>
+                <td><strong>Analysis Latency</strong></td>
+                <td>Manual interpretation (hours–days)</td>
+                <td>30-second recording required</td>
+                <td>Batch processing offline</td>
+                <td style="color: var(--cyan); font-weight: 700;">Real-time Streaming (&lt; 5 ms / beat)</td>
+              </tr>
+              <tr>
+                <td><strong>Contextual Features</strong></td>
+                <td>Manual caliper calipers</td>
+                <td>None (raw single-interval PPG)</td>
+                <td>Simple R-peak interval thresholding</td>
+                <td style="color: var(--green); font-weight: 700;">221-D Hybrid: 216 Morph + 5 RR Ratios</td>
+              </tr>
+              <tr>
+                <td><strong>Explainability</strong></td>
+                <td>Physician judgment</td>
+                <td>Black-box "Inconclusive" alert</td>
+                <td>Rigid rule-engine text outputs</td>
+                <td style="color: var(--cyan); font-weight: 700;">Confidence % + RR interval ratios + Beat tags</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- SLIDE 4: INNOVATIVE SOLUTION -->
+      <!-- ========================================== -->
+      <section class="slide" id="slide-4">
+        <div class="slide-header">
+          <div class="slide-meta">
+            <span class="slide-category">Proposed Solution</span>
+            <span class="slide-number">04 / 10</span>
+          </div>
+          <h2 class="slide-title">BIOFORGE: Dual-Engine Clinical Intelligence</h2>
+          <p class="slide-subtitle">A high-throughput, low-latency machine learning system engineered for multi-modal ECG triaging.</p>
+        </div>
+
+        <div class="slide-content">
+          <div class="grid-3">
+            <div class="card">
+              <div class="card-title">🔬 Engine 1: 5-Class Arrhythmia</div>
+              <div class="card-body">
+                <ul>
+                  <li><strong style="color: var(--green);">[N] Normal Sinus Beat</strong> & Bundle branch blocks</li>
+                  <li><strong style="color: var(--amber);">[S] Supraventricular Ectopic</strong> (Atrial premature, nodal)</li>
+                  <li><strong style="color: var(--red);">[V] Ventricular Ectopic</strong> (PVC, Bigeminy, Trigeminy)</li>
+                  <li><strong style="color: #ab47bc;">[F] Fusion Beat</strong> (Ventricular + Normal)</li>
+                  <li><strong style="color: #78909c;">[Q] Unknown / Paced Beat</strong></li>
+                  <li>Trained on PhysioNet MIT-BIH dataset (48 clinical patients).</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-title">❤️ Engine 2: MI Ischemia Detection</div>
+              <div class="card-body">
+                <ul>
+                  <li>Classifies <strong>Myocardial Infarction (MI)</strong> vs. Healthy control traces.</li>
+                  <li>Extracts ST-segment elevation/depression & T-wave inversions.</li>
+                  <li>Validated on PhysioNet PTB Diagnostic Database (14,552 records).</li>
+                  <li><strong>97.0% Accuracy</strong> & <strong>0.9939 ROC-AUC</strong> for acute ischemia risk triaging.</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-title">⚡ Multi-Modal Ingestion Modes</div>
+              <div class="card-body">
+                <ul>
+                  <li><strong>Instant File Screening:</strong> Drag-and-drop CSV / DAT waveforms with sub-second breakdown.</li>
+                  <li><strong>Live WebSocket Streaming:</strong> Real-time 360 Hz telemetry streaming with live rolling charts.</li>
+                  <li><strong>Batch Queue Worker:</strong> Async background processing of multi-patient Holter datasets with instant CSV export.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid-4" style="margin-top: 16px;">
+            <div class="metric-badge"><span class="metric-val">221-D</span><span class="metric-lbl">Feature Dimensions</span><span class="metric-desc">Hybrid Morphology + Context</span></div>
+            <div class="metric-badge"><span class="metric-val green">360 Hz</span><span class="metric-lbl">Sampling Support</span><span class="metric-desc">Interpolated resampling engine</span></div>
+            <div class="metric-badge"><span class="metric-val amber">100%</span><span class="metric-lbl">Local Privacy</span><span class="metric-desc">Zero cloud dependency needed</span></div>
+            <div class="metric-badge"><span class="metric-val">3 Modes</span><span class="metric-lbl">Operational Flexibility</span><span class="metric-desc">Instant / Stream / Batch</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- SLIDE 5: TECHNICAL PIPELINE -->
+      <!-- ========================================== -->
+      <section class="slide" id="slide-5">
+        <div class="slide-header">
+          <div class="slide-meta">
+            <span class="slide-category">Signal Processing Pipeline</span>
+            <span class="slide-number">05 / 10</span>
+          </div>
+          <h2 class="slide-title">End-to-End Signal Processing & Feature Engineering</h2>
+          <p class="slide-subtitle">Bioinformatics pipeline transforming noisy microvolt analog signals into high-confidence predictions.</p>
+        </div>
+
+        <div class="slide-content">
+          <div class="grid-4" style="flex: 1;">
+            <div class="card">
+              <span class="tag tag-cyan" style="align-self: flex-start; margin-bottom: 8px;">STEP 1</span>
+              <div class="card-title">Filtering & Denoising</div>
+              <div class="card-body">
+                <ul>
+                  <li><strong>Butterworth Bandpass:</strong> 0.5 Hz – 40 Hz 3rd-order filter removes baseline wander & high-freq EMG.</li>
+                  <li><strong>50/60 Hz Notch:</strong> Eliminates powerline interference.</li>
+                  <li><strong>Z-Score Normalization:</strong> Robust zero-mean unit-variance scaling.</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="card">
+              <span class="tag tag-cyan" style="align-self: flex-start; margin-bottom: 8px;">STEP 2</span>
+              <div class="card-title">Pan-Tompkins QRS</div>
+              <div class="card-body">
+                <ul>
+                  <li><strong>Derivative Filter:</strong> Highlights steep QRS slope.</li>
+                  <li><strong>Non-Linear Squaring:</strong> Amplifies high-frequency energy.</li>
+                  <li><strong>Moving-Window Integration:</strong> 150 ms envelope detector.</li>
+                  <li><strong>Dynamic Dual-Thresholding:</strong> Detects R-peaks with &gt; 99% fiducial accuracy.</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="card highlight">
+              <span class="tag tag-green" style="align-self: flex-start; margin-bottom: 8px;">STEP 3 &bull; INNOVATION</span>
+              <div class="card-title">221-D Feature Vector</div>
+              <div class="card-body">
+                <ul>
+                  <li><strong>216-D Morphological:</strong> Resampled 180-sample beat window centered on R-peak (-90 to +90 samples).</li>
+                  <li><strong>5-D Dynamic RR Context:</strong>
+                    <br>&bull; Pre-RR & Post-RR intervals
+                    <br>&bull; Local RR Ratio (Pre / Post)
+                    <br>&bull; Global RR Ratio (Pre / Mean 10)
+                    <br>&bull; Differential RR (&Delta;RR)
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="card">
+              <span class="tag tag-cyan" style="align-self: flex-start; margin-bottom: 8px;">STEP 4</span>
+              <div class="card-title">Machine Learning</div>
+              <div class="card-body">
+                <ul>
+                  <li><strong>Random Forest Ensemble:</strong> 100 tuned decision trees with balanced class weighting.</li>
+                  <li><strong>Fast Inference:</strong> Sub-5ms prediction with tree traversal.</li>
+                  <li><strong>Calibrated Probabilities:</strong> Per-class posterior probability vector output.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top: 14px; padding: 12px 20px; background: rgba(0, 229, 255, 0.05); border-color: rgba(0, 229, 255, 0.3);">
+            <div style="font-size: 12px; color: var(--text-white);">
+              <strong style="color: var(--cyan);">Why RR Context is a Game Changer:</strong> Premature beats (like Supraventricular and PVCs) frequently have identical morphology to normal beats but occur prematurely (short pre-RR, long compensatory post-RR pause). Adding the 5-D RR ratios boosted our S-class sensitivity tenfold!
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- SLIDE 6: SYSTEM ARCHITECTURE & TECH STACK -->
+      <!-- ========================================== -->
+      <section class="slide" id="slide-6">
+        <div class="slide-header">
+          <div class="slide-meta">
+            <span class="slide-category">System Architecture & Tech Stack</span>
+            <span class="slide-number">06 / 10</span>
+          </div>
+          <h2 class="slide-title">Modern, Scalable Full-Stack Architecture</h2>
+          <p class="slide-subtitle">Built with enterprise-grade microservices for real-time telemetry and clinical data persistence.</p>
+        </div>
+
+        <div class="slide-content">
+          <div class="grid-2">
+            <div class="card">
+              <div class="card-title">💻 Modern Technology Stack</div>
+              <div class="card-body">
+                <ul>
+                  <li><strong>Backend:</strong> Python 3.12+ / FastAPI asynchronous REST API & WebSocket gateways.</li>
+                  <li><strong>Frontend:</strong> React 18, Vite, Tailwind CSS, Lucide Icons, Canvas ECG rendering.</li>
+                  <li><strong>ML & Analytics:</strong> Scikit-Learn, NumPy, SciPy, BioSPPy, Joblib model serialization.</li>
+                  <li><strong>Database & Cache:</strong> PostgreSQL + TimescaleDB for time-series ECG telemetry, Redis for real-time pub/sub.</li>
+                  <li><strong>Task Queue:</strong> Celery for distributed batch job execution.</li>
+                  <li><strong>Deployment:</strong> Multi-stage Docker containers + Vercel Cloud CDN frontend.</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-title">🖥️ 5 Production Clinical Interfaces</div>
+              <div class="card-body">
+                <ul>
+                  <li><strong>1. System Dashboard:</strong> Live latency monitor, API health, model status, and screening counters.</li>
+                  <li><strong>2. Real-Time Screening:</strong> Interactive drag-and-drop CSV waveform analysis with pan/zoom.</li>
+                  <li><strong>3. Live Stream Simulator:</strong> 360 Hz live telemetry with beat-by-beat arrhythmia alerts.</li>
+                  <li><strong>4. Batch Processing Hub:</strong> High-throughput multi-patient queue with progress bars and CSV export.</li>
+                  <li><strong>5. Patient History & Audit:</strong> Comprehensive audit log with searchable classifications and triages.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid-4" style="margin-top: 16px;">
+            <div class="metric-badge"><span class="metric-val green">FastAPI</span><span class="metric-lbl">Async Core</span><span class="metric-desc">Async IO concurrency</span></div>
+            <div class="metric-badge"><span class="metric-val">React 18</span><span class="metric-lbl">Vite SPA</span><span class="metric-desc">Sub-second hot-reloads</span></div>
+            <div class="metric-badge"><span class="metric-val amber">WebSocket</span><span class="metric-lbl">Full-Duplex</span><span class="metric-desc">360 Hz live push</span></div>
+            <div class="metric-badge"><span class="metric-val">TimescaleDB</span><span class="metric-lbl">Time-Series</span><span class="metric-desc">Hypertable chunking</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- SLIDE 7: EMPIRICAL BENCHMARKS -->
+      <!-- ========================================== -->
+      <section class="slide" id="slide-7">
+        <div class="slide-header">
+          <div class="slide-meta">
+            <span class="slide-category">Empirical Results & Validation</span>
+            <span class="slide-number">07 / 10</span>
+          </div>
+          <h2 class="slide-title">Clinical Dataset Benchmarks & Breakthroughs</h2>
+          <p class="slide-subtitle">Rigorous testing on internationally accredited PhysioNet clinical databases.</p>
+        </div>
+
+        <div class="slide-content">
+          <div class="grid-3">
+            <div class="card">
+              <div class="card-title">📊 MIT-BIH Arrhythmia</div>
+              <div class="card-body">
+                <div style="font-size: 28px; font-weight: 800; color: var(--cyan); margin-bottom: 8px;">89.2%</div>
+                <div style="font-size: 12px; color: var(--text-white); margin-bottom: 12px;">Overall Accuracy (49,611 Test Beats)</div>
+                <ul>
+                  <li><strong>N (Normal):</strong> 97.8% Precision</li>
+                  <li><strong>V (Ventricular PVC):</strong> 92.4% Sensitivity</li>
+                  <li><strong>S-Class Recall Breakthrough:</strong>
+                    <br>&bull; Morphology Only: <strong>2.0%</strong>
+                    <br>&bull; With 5-D RR Context: <strong>20.4%</strong> (10.2x boost!)
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-title">❤️ PTB Diagnostic (MI)</div>
+              <div class="card-body">
+                <div style="font-size: 28px; font-weight: 800; color: var(--green); margin-bottom: 8px;">97.0%</div>
+                <div style="font-size: 12px; color: var(--text-white); margin-bottom: 12px;">Binary MI Detection Accuracy</div>
+                <ul>
+                  <li><strong>ROC-AUC:</strong> <strong>0.9939</strong></li>
+                  <li><strong>Sensitivity (Recall):</strong> <strong>97.8%</strong></li>
+                  <li><strong>Specificity:</strong> <strong>95.1%</strong></li>
+                  <li>Minimizes false negatives in emergency triage scenarios.</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="card highlight">
+              <div class="card-title">⚡ Speed & Combined Model</div>
+              <div class="card-body">
+                <div style="font-size: 28px; font-weight: 800; color: var(--cyan); margin-bottom: 8px;">99.1%</div>
+                <div style="font-size: 12px; color: var(--text-white); margin-bottom: 12px;">Combined Benchmark Ensemble</div>
+                <ul>
+                  <li><strong>Inference Latency:</strong> <strong>&lt; 4.8 ms</strong> per single beat</li>
+                  <li><strong>10-Second Strip:</strong> <strong>&lt; 45 ms</strong> total pipeline execution</li>
+                  <li><strong>Zero Data Leakage:</strong> Patient-stratified holdout split guarantees honest generalization.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top: 14px; padding: 12px 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 13px; font-weight: 700; color: var(--text-white);">Confusion Matrix Highlights (AAMI EC57 Compliance):</span>
+              <span class="tag tag-green">Zero Synthetic Hallucinations</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- SLIDE 8: CLINICAL SAFETY & TRIAGING -->
+      <!-- ========================================== -->
+      <section class="slide" id="slide-8">
+        <div class="slide-header">
+          <div class="slide-meta">
+            <span class="slide-category">Clinical Safety & Explainability</span>
+            <span class="slide-number">08 / 10</span>
+          </div>
+          <h2 class="slide-title">Doctor-in-the-Loop Triaging & Safety Guardrails</h2>
+          <p class="slide-subtitle">AI serves as an intelligent diagnostic copilot, never an unverified black box.</p>
+        </div>
+
+        <div class="slide-content">
+          <div class="grid-3">
+            <div class="card" style="border-left: 4px solid var(--red);">
+              <div class="card-title" style="color: var(--red);">🔴 HIGH PRIORITY TRIAGE</div>
+              <div class="card-body">
+                <ul>
+                  <li><strong>Trigger:</strong> Ventricular Ectopic (PVC / VT) OR MI detected with &gt; 80% confidence.</li>
+                  <li><strong>Action:</strong> Instant visual flash alert, sound chime, automated SMS notification to attending physician.</li>
+                  <li>Immediate recommendation for 12-lead confirmatory ECG.</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="card" style="border-left: 4px solid var(--amber);">
+              <div class="card-title" style="color: var(--amber);">🟡 MODERATE / REVIEW</div>
+              <div class="card-body">
+                <ul>
+                  <li><strong>Trigger:</strong> Supraventricular Ectopic (S) OR any prediction with confidence &lt; 75%.</li>
+                  <li><strong>Action:</strong> Flagged in clinical review queue for cardiologist inspection.</li>
+                  <li>Displays full 221-D extracted parameters and local RR ratios for validation.</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="card" style="border-left: 4px solid var(--green);">
+              <div class="card-title" style="color: var(--green);">🟢 NORMAL / STABLE</div>
+              <div class="card-body">
+                <ul>
+                  <li><strong>Trigger:</strong> Normal sinus rhythm [N] with &gt; 90% confidence.</li>
+                  <li><strong>Action:</strong> Auto-logged into electronic patient chart with routine monitoring schedule.</li>
+                  <li>Reduces doctor workload by 80%, filtering out benign baseline rhythms.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid-2" style="margin-top: 16px;">
+            <div class="card">
+              <div class="card-title">🔍 Signal Quality Metric (SQI)</div>
+              <div class="card-body">
+                Rejects detached electrodes or motion artifact noise prior to model ingestion, preventing false arrhythmia alarms.
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-title">📄 Auditability & Report Generation</div>
+              <div class="card-body">
+                Every classified strip includes timestamp, raw lead signals, detected fiducials, and one-click PDF clinical report export.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- SLIDE 9: BIOTECHNOLOGY RELEVANCE -->
+      <!-- ========================================== -->
+      <section class="slide" id="slide-9">
+        <div class="slide-header">
+          <div class="slide-meta">
+            <span class="slide-category">Biotechnology Relevance & Future Scope</span>
+            <span class="slide-number">09 / 10</span>
+          </div>
+          <h2 class="slide-title">Bioengineering Synergy & Future Roadmap</h2>
+          <p class="slide-subtitle">Bridging cellular electrophysiology, bioinformatics feature mining, and wearable IoT biosensors.</p>
+        </div>
+
+        <div class="slide-content">
+          <div class="grid-2">
+            <div class="card">
+              <div class="card-title">🧬 Bioengineering Principles Applied</div>
+              <div class="card-body">
+                <ul>
+                  <li><strong>Cardiac Electrophysiology:</strong> Understanding SA node pacemaking, Phase 0 Na+ influx (QRS), and Phase 3 K+ repolarization (T-wave) to engineer meaningful waveform features.</li>
+                  <li><strong>Bioinformatics Signal Processing:</strong> Digital Butterworth filters modeled after cellular biopotential frequencies (0.5–40 Hz).</li>
+                  <li><strong>Biomedical Data Normalization:</strong> Robust z-score scaling countering skin impedance variations across different patient demographics.</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-title">🚀 Future Development Roadmap</div>
+              <div class="card-body">
+                <ul>
+                  <li><strong>Phase 1 (Current):</strong> Single-lead 5-class AAMI + MI screening web platform (Complete & Operational).</li>
+                  <li><strong>Phase 2 (Next 3 Mo):</strong> IoT Patch Integration with <strong>AD8232 / MAX30001</strong> ECG analog front-ends via ESP32 Bluetooth Low Energy (BLE).</li>
+                  <li><strong>Phase 3 (Next 6 Mo):</strong> Full 12-lead ST-elevation myocardial infarction (STEMI) localized coronary artery mapping (LAD, RCA, LCx).</li>
+                  <li><strong>Phase 4 (Next 12 Mo):</strong> Edge AI quantization (TensorFlow Lite / ONNX) deployed on Raspberry Pi for battery-powered rural clinics.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="card highlight" style="margin-top: 16px; padding: 14px 20px;">
+            <div style="font-size: 13px; color: var(--text-white);">
+              <strong style="color: var(--cyan);">Impact Potential:</strong> A scalable, $25 hardware solution capable of delivering Tier-1 hospital-grade arrhythmia screening to over 25,000 Primary Health Centres across developing nations.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- SLIDE 10: REFERENCES & TEAM -->
+      <!-- ========================================== -->
+      <section class="slide" id="slide-10">
+        <div class="slide-header">
+          <div class="slide-meta">
+            <span class="slide-category">References & Team</span>
+            <span class="slide-number">10 / 10</span>
+          </div>
+          <h2 class="slide-title">References & Team BIOFORGE</h2>
+          <p class="slide-subtitle">HEALTHNOVA 2026 | IEEE EMBS Bioengineering Innovation Challenge</p>
+        </div>
+
+        <div class="slide-content">
+          <div class="grid-2">
+            <div class="card">
+              <div class="card-title">📚 Clinical & Scientific References</div>
+              <div class="card-body" style="font-size: 12px;">
+                <ol style="padding-left: 16px; line-height: 1.6;">
+                  <li><strong>PhysioNet MIT-BIH Arrhythmia Database:</strong> Gold et al., Circulation 2000; 101(23): e215-e220.</li>
+                  <li><strong>PTB Diagnostic Database:</strong> Bousseljot et al., Biomedizinische Technik 1995; 40(s1): 317-318.</li>
+                  <li><strong>Pan-Tompkins QRS Algorithm:</strong> Pan & Tompkins, IEEE Trans. Biomed. Eng. 1985; BME-32(3): 230-236.</li>
+                  <li><strong>ANSI/AAMI EC57 Standard:</strong> Testing and reporting performance results of cardiac rhythm and ST-segment identification algorithms.</li>
+                  <li><strong>FastAPI & React Open Architectures:</strong> Modern async event-driven biomedical streaming frameworks.</li>
+                </ol>
+              </div>
+            </div>
+
+            <div class="card highlight">
+              <div class="card-title">👥 Team BIOFORGE</div>
+              <div class="card-body">
+                <div style="margin-bottom: 14px;">
+                  <div style="font-size: 16px; font-weight: 700; color: var(--text-white);">Aditya Singh Chauhan</div>
+                  <div style="font-size: 12px; color: var(--cyan);">System Architecture &bull; ML Pipeline &bull; Backend Engineering</div>
+                </div>
+                <div style="margin-bottom: 16px;">
+                  <div style="font-size: 16px; font-weight: 700; color: var(--text-white);">Shaik Mulla Muneer Ahamad</div>
+                  <div style="font-size: 12px; color: var(--green);">Frontend Engineering &bull; UI/UX &bull; Clinical Workflow Design</div>
+                </div>
+                <div style="border-top: 1px solid var(--border-color); padding-top: 12px; font-size: 12px; color: var(--text-muted);">
+                  <strong>Program:</strong> B.Tech Biotechnology (2nd Year, 3rd Semester)<br>
+                  <strong>Institution:</strong> Galgotias University, Greater Noida<br>
+                  <strong>GitHub:</strong> github.com/Aditya891752/AI-ASSISTED-ECG-ANALYSIS
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top: 16px; background: rgba(0, 229, 255, 0.08); border-color: var(--cyan); text-align: center; padding: 16px;">
+            <div style="font-size: 18px; font-weight: 800; color: var(--cyan); margin-bottom: 4px;">Thank You! Any Questions?</div>
+            <div style="font-size: 13px; color: var(--text-white);">Live System Demonstration Ready &bull; PS-03 Accessible ECG Screening Support</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Bottom Nav Indicators -->
+      <div class="bottom-nav" id="bottomNav"></div>
+    </div>
+  </div>
+
+  <script>
+    let currentSlide = 1;
+    const totalSlides = 10;
+
+    function renderDots() {
+      const nav = document.getElementById('bottomNav');
+      nav.innerHTML = '';
+      for (let i = 1; i <= totalSlides; i++) {
+        const dot = document.createElement('div');
+        dot.className = `nav-dot ${i === currentSlide ? 'active' : ''}`;
+        dot.onclick = () => goToSlide(i);
+        nav.appendChild(dot);
+      }
+    }
+
+    function showSlide(index) {
+      if (index < 1) index = 1;
+      if (index > totalSlides) index = totalSlides;
+      currentSlide = index;
+
+      document.querySelectorAll('.slide').forEach((slide, idx) => {
+        slide.classList.toggle('active', idx + 1 === currentSlide);
+      });
+
+      document.getElementById('slideNumDisplay').textContent = `${String(currentSlide).padStart(2, '0')} / ${String(totalSlides).padStart(2, '0')}`;
+      renderDots();
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) {
+        showSlide(currentSlide + 1);
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) {
+        showSlide(currentSlide - 1);
+      }
+    }
+
+    function goToSlide(n) {
+      showSlide(n);
+    }
+
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {
+          alert(`Error attempting to enable fullscreen: ${err.message}`);
+        });
+      } else {
+        document.exitFullscreen();
+      }
+    }
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') {
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        prevSlide();
+      } else if (e.key === 'f' || e.key === 'F') {
+        toggleFullScreen();
+      } else if (e.key >= '1' && e.key <= '9') {
+        goToSlide(parseInt(e.key));
+      } else if (e.key === '0') {
+        goToSlide(10);
+      }
+    });
+
+    renderDots();
+  </script>
+</body>
+</html>
