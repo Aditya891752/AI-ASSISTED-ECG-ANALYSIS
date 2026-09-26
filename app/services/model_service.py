@@ -63,10 +63,27 @@ class ModelService:
     def _load_sync(self) -> None:
         path = self._model_path
         if not path.exists():
-            raise FileNotFoundError(
-                f"Model file not found at '{path}'. "
-                "Drop your model.pkl or model.pt into the model/ directory."
-            )
+            # Fallback 1: Resolve relative to project root (app/services/../../..)
+            project_root = Path(__file__).resolve().parent.parent.parent
+            candidate = project_root / path
+            if candidate.exists():
+                path = candidate
+            else:
+                # Fallback 2: Check inside project_root / "model"
+                model_dir = project_root / "model"
+                candidates = [
+                    model_dir / "model.pkl",
+                    model_dir / "model_combined_rf.pkl",
+                    model_dir / "model_ptbdb_rf.pkl",
+                ]
+                found = next((c for c in candidates if c.exists()), None)
+                if found:
+                    path = found
+                else:
+                    raise FileNotFoundError(
+                        f"Model file not found at '{self._model_path}' or '{candidate}'. "
+                        "Ensure model/model.pkl exists in the project root."
+                    )
 
         suffix = path.suffix.lower()
 

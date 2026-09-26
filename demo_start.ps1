@@ -9,6 +9,7 @@ Write-Host "======================================================" -ForegroundC
 Write-Host ""
 
 $baseDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+Set-Location $baseDir
 
 # 1. Check Python
 $pythonCmd = "python"

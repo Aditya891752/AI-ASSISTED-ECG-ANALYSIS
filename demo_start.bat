@@ -37,13 +37,14 @@ exit /b 1
 echo [OK] Node.js found
 
 :: 3. Set paths and config
+cd /d "%~dp0"
 set "PYTHONPATH=D:\Lib\site-packages;%~dp0"
 if not exist "%~dp0.env" if exist "%~dp0.env.example" copy "%~dp0.env.example" "%~dp0.env" >nul
 
 :: 4. Start Backend
 echo.
 echo [1/2] Starting backend on http://localhost:8000 ...
-start "PS03-Backend" cmd /k "%PYTHON% -m uvicorn app.main:app --host 0.0.0.0 --port 8000"
+start "PS03-Backend" /d "%~dp0" cmd /k "%PYTHON% -m uvicorn app.main:app --host 0.0.0.0 --port 8000"
 
 :: 5. Wait for Backend
 echo [WAIT] Waiting for backend API to be ready...
@@ -65,9 +66,7 @@ echo [OK] Backend is ready!
 :: 6. Start Frontend
 echo.
 echo [2/2] Starting frontend on http://localhost:5173 ...
-cd /d "%~dp0frontend"
-start "PS03-Frontend" cmd /k "node_modules\.bin\vite --port 5173"
-cd /d "%~dp0"
+start "PS03-Frontend" /d "%~dp0frontend" cmd /k "node_modules\.bin\vite --port 5173"
 
 :: 7. Wait for Frontend
 echo [WAIT] Waiting for frontend to compile...
