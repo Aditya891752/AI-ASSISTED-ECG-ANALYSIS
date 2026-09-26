@@ -48,9 +48,22 @@ async def get_job(
     job_id: uuid.UUID,
     db: DBSession,
 ) -> JobDetailResponse:
-    stmt = select(BatchJob).where(BatchJob.id == job_id)
-    result = await db.execute(stmt)
-    job: BatchJob | None = result.scalar_one_or_none()
+    from app.services.job_service import job_service
+
+    # 1. Check in-memory JobService first (works in standalone demo mode)
+    in_memory = job_service.get_job(job_id)
+    if in_memory is not None:
+        return in_memory
+
+    # 2. Check PostgreSQL database if available
+    job = None
+    if db is not None:
+        try:
+            stmt = select(BatchJob).where(BatchJob.id == job_id)
+            result = await db.execute(stmt)
+            job = result.scalar_one_or_none()
+        except Exception as exc:
+            logger.warning("Error querying batch job from database", error=str(exc))
 
     if job is None:
         raise HTTPException(

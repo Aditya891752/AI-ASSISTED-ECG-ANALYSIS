@@ -47,6 +47,16 @@ async def ping_redis() -> float:
     return (time.perf_counter() - start) * 1000
 
 
+async def is_redis_available() -> bool:
+    """Check if Redis broker is reachable with a quick 0.3s timeout."""
+    import asyncio
+    try:
+        await asyncio.wait_for(ping_redis(), timeout=0.3)
+        return True
+    except Exception:
+        return False
+
+
 # ── Result Caching ────────────────────────────────────────────────────────────
 
 def _make_cache_key(signal_hash: str) -> str:

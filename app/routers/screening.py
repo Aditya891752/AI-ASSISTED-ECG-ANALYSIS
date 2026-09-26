@@ -9,7 +9,7 @@ from __future__ import annotations
 import uuid
 
 import structlog
-from fastapi import APIRouter, HTTPException, Request, UploadFile, File, status
+from fastapi import APIRouter, BackgroundTasks, HTTPException, Request, UploadFile, File, status
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 
@@ -119,20 +119,31 @@ Use `GET /jobs/{job_id}` to poll processing progress and retrieve results.
 async def screen_batch(
     request: Request,
     body: BatchScreeningRequest,
+    model_service: ModelDep,
+    background_tasks: BackgroundTasks,
     db: DBSession,
 ) -> JobResponse:
-    from app.db.models import BatchJob
-    from app.workers.tasks import process_batch_task
+    from app.services.job_service import job_service
 
-    # Create job record
-    job_id = uuid.uuid4()
-    job = BatchJob(
-        id=job_id,
-        total_signals=len(body.signals),
-        status="pending",
-    )
-    db.add(job)
-    await db.flush()
+    # Serialise signals for processing
+    signals_data = [s.model_dump(mode="json") for s in body.signals]
+
+    # Create job in JobService (in-memory tracking)
+    job_id, job_response = job_service.create_job(len(body.signals))
+
+    # Try creating DB record if database is available
+    if db is not None:
+        try:
+            from app.db.models import BatchJob
+            job = BatchJob(
+                id=job_id,
+                total_signals=len(body.signals),
+                status="pending",
+            )
+            db.add(job)
+            await db.flush()
+        except Exception as exc:
+            logger.debug("Database record creation skipped for batch", error=str(exc))
 
     logger.info(
         "Batch job created",
@@ -140,21 +151,32 @@ async def screen_batch(
         total_signals=len(body.signals),
     )
 
-    # Serialise signals for Celery (must be JSON-serialisable)
-    signals_data = [s.model_dump(mode="json") for s in body.signals]
+    # Check if Redis and Celery are available; otherwise use in-process background execution
+    from app.services.cache_service import is_redis_available
 
-    # Dispatch to Celery worker — non-blocking
-    process_batch_task.apply_async(
-        kwargs={"job_id": str(job_id), "signals_data": signals_data},
-        task_id=str(uuid.uuid4()),
-    )
+    celery_dispatched = False
+    if await is_redis_available():
+        try:
+            from app.workers.tasks import process_batch_task
+            process_batch_task.apply_async(
+                kwargs={"job_id": str(job_id), "signals_data": signals_data},
+                task_id=str(uuid.uuid4()),
+            )
+            celery_dispatched = True
+            logger.info("Batch job dispatched to Celery", job_id=str(job_id))
+        except Exception as exc:
+            logger.info("Celery dispatch failed", reason=str(exc))
+
+    if not celery_dispatched:
+        logger.info("Running batch processing in-process with BackgroundTasks", job_id=str(job_id))
+        background_tasks.add_task(
+            job_service.run_batch_in_background,
+            job_id,
+            signals_data,
+            model_service,
+        )
 
     BATCH_JOBS_SUBMITTED.inc()
     BATCH_QUEUE_DEPTH.inc()
 
-    return JobResponse(
-        job_id=job_id,
-        status="pending",  # type: ignore[arg-type]
-        total_signals=len(body.signals),
-        poll_url=f"{settings.api_prefix}/jobs/{job_id}",
-    )
+    return job_response
