@@ -92,54 +92,61 @@ async def get_history(
         settings.max_page_size,
     )
 
-    # ── Build query ────────────────────────────────────────────────────────────
-    stmt = select(ScreeningResultModel)
+    # ── Database query (if DB is connected) ────────────────────────────────────
+    if db is not None:
+        try:
+            stmt = select(ScreeningResultModel)
 
-    if label is not None:
-        stmt = stmt.where(ScreeningResultModel.dominant_label == label.value)
-    if patient_id is not None:
-        stmt = stmt.where(ScreeningResultModel.patient_id == patient_id)
-    if from_dt is not None:
-        stmt = stmt.where(ScreeningResultModel.created_at >= from_dt)
-    if to_dt is not None:
-        stmt = stmt.where(ScreeningResultModel.created_at <= to_dt)
-    if job_id is not None:
-        stmt = stmt.where(ScreeningResultModel.batch_job_id == job_id)
+            if label is not None:
+                stmt = stmt.where(ScreeningResultModel.dominant_label == label.value)
+            if patient_id is not None:
+                stmt = stmt.where(ScreeningResultModel.patient_id == patient_id)
+            if from_dt is not None:
+                stmt = stmt.where(ScreeningResultModel.created_at >= from_dt)
+            if to_dt is not None:
+                stmt = stmt.where(ScreeningResultModel.created_at <= to_dt)
+            if job_id is not None:
+                stmt = stmt.where(ScreeningResultModel.batch_job_id == job_id)
 
-    # Count total matching records (without pagination)
-    count_stmt = select(func.count()).select_from(stmt.subquery())
-    total_result = await db.execute(count_stmt)
-    total = total_result.scalar_one()
+            # Count total matching records (without pagination)
+            count_stmt = select(func.count()).select_from(stmt.subquery())
+            total_result = await db.execute(count_stmt)
+            total = total_result.scalar_one()
 
-    # Apply ordering and pagination
-    stmt = (
-        stmt
-        .order_by(ScreeningResultModel.created_at.desc())
-        .offset((page - 1) * effective_page_size)
-        .limit(effective_page_size)
-    )
+            # Apply ordering and pagination
+            stmt = (
+                stmt
+                .order_by(ScreeningResultModel.created_at.desc())
+                .offset((page - 1) * effective_page_size)
+                .limit(effective_page_size)
+            )
 
-    rows = await db.execute(stmt)
-    orm_results = rows.scalars().all()
+            rows = await db.execute(stmt)
+            orm_results = rows.scalars().all()
 
-    # ── Map ORM → schema ───────────────────────────────────────────────────────
-    items = [_orm_to_schema(row) for row in orm_results]
-    pages = max(1, (total + effective_page_size - 1) // effective_page_size)
+            # ── Map ORM → schema ───────────────────────────────────────────────────────
+            items = [_orm_to_schema(row) for row in orm_results]
+            pages = max(1, (total + effective_page_size - 1) // effective_page_size)
 
-    logger.info(
-        "History query",
+            return PaginatedResponse(
+                items=items,
+                total=total,
+                page=page,
+                page_size=effective_page_size,
+                pages=pages,
+            )
+        except Exception as exc:
+            logger.debug("Database history query failed, falling back to in-memory store", error=str(exc))
+
+    # ── In-memory history fallback (standalone demo mode) ───────────────────────
+    from app.services.history_service import history_service
+    return history_service.get_paginated(
         label=label,
         patient_id=patient_id,
-        total=total,
-        page=page,
-    )
-
-    return PaginatedResponse(
-        items=items,
-        total=total,
+        from_dt=from_dt,
+        to_dt=to_dt,
         page=page,
         page_size=effective_page_size,
-        pages=pages,
     )
 
 
@@ -175,8 +182,20 @@ async def get_result_by_id(
     db: DBSession,
 ) -> ScreeningResult:
     from fastapi import HTTPException
-    stmt = select(ScreeningResultModel).where(ScreeningResultModel.id == result_id)
-    row = (await db.execute(stmt)).scalars().first()
-    if row is None:
-        raise HTTPException(status_code=404, detail=f"Result {result_id} not found")
-    return _orm_to_schema(row)
+    from app.services.history_service import history_service
+
+    # Check in-memory history first
+    mem = history_service.get_by_id(result_id)
+    if mem is not None:
+        return mem
+
+    if db is not None:
+        try:
+            stmt = select(ScreeningResultModel).where(ScreeningResultModel.id == result_id)
+            row = (await db.execute(stmt)).scalars().first()
+            if row is not None:
+                return _orm_to_schema(row)
+        except Exception as exc:
+            logger.debug("Error querying single result from DB", error=str(exc))
+
+    raise HTTPException(status_code=404, detail=f"Result {result_id} not found")

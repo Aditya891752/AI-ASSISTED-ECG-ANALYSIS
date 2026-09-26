@@ -202,7 +202,7 @@ async def _build_result(
         except Exception as exc:  # noqa: BLE001
             logger.debug("Database persistence skipped (running in demo mode)", error=str(exc))
 
-    return ScreeningResult(
+    res = ScreeningResult(
         result_id=result_id,
         signal_id=signal_id,
         patient_id=request.patient_id,
@@ -216,3 +216,11 @@ async def _build_result(
         inference_duration_ms=round(inference_ms, 2),
         created_at=created_at.isoformat(),
     )
+
+    try:
+        from app.services.history_service import history_service
+        history_service.add(res)
+    except Exception as exc:
+        logger.debug("Failed to record result to history_service", error=str(exc))
+
+    return res
