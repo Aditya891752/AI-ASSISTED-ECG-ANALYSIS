@@ -1,0 +1,152 @@
+version: "3.9"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# PS-03 ECG Screening System — Docker Compose
+#
+# Services:
+#   timescaledb  PostgreSQL + TimescaleDB extension (port 5432)
+#   redis        Redis for Celery broker/backend + API cache (port 6379)
+#   api          FastAPI application (port 8000)
+#   worker       Celery batch-processing worker
+#   frontend     React SPA served by nginx (port 3000)  ← open this in browser
+#   flower       Celery monitoring UI (port 5555) — optional profile
+#
+# Quick start:
+#   docker-compose up --build
+#   Open http://localhost:3000
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+
+  # ── TimescaleDB ──────────────────────────────────────────────────────────────
+  timescaledb:
+    image: timescale/timescaledb:latest-pg16
+    container_name: ps03-timescaledb
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ecg
+      POSTGRES_PASSWORD: ecgpassword
+      POSTGRES_DB: ecgdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - timescaledb_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ecg -d ecgdb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # ── Redis ─────────────────────────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: ps03-redis
+    restart: unless-stopped
+    command: redis-server --maxmemory 512mb --maxmemory-policy allkeys-lru --save "" --appendonly no
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── FastAPI Application ───────────────────────────────────────────────────────
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ps03-api
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql+asyncpg://ecg:ecgpassword@timescaledb:5432/ecgdb
+      REDIS_URL: redis://redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6379/1
+      CELERY_RESULT_BACKEND: redis://redis:6379/2
+      MODEL_PATH: /app/model/model.pkl
+      ENVIRONMENT: production
+      LOG_LEVEL: INFO
+      ECG_SAMPLE_RATE: "360"
+      ECG_BATCH_SIZE: "256"
+    volumes:
+      - ./model:/app/model:ro        # Mount trained model (read-only)
+    depends_on:
+      timescaledb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
+  # ── Celery Worker ─────────────────────────────────────────────────────────────
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+    container_name: ps03-worker
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql+asyncpg://ecg:ecgpassword@timescaledb:5432/ecgdb
+      REDIS_URL: redis://redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6379/1
+      CELERY_RESULT_BACKEND: redis://redis:6379/2
+      MODEL_PATH: /app/model/model.pkl
+      LOG_LEVEL: INFO
+      ECG_SAMPLE_RATE: "360"
+      ECG_BATCH_SIZE: "256"
+    volumes:
+      - ./model:/app/model:ro
+    depends_on:
+      timescaledb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          cpus: "2"
+          memory: 2G
+
+  # ── React Frontend (nginx) ────────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: ps03-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:80"              # App available at http://localhost:3000
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:80/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  # ── Flower (Celery monitoring) ────────────────────────────────────────────────
+  flower:
+    image: mher/flower:2.0.1
+    container_name: ps03-flower
+    restart: unless-stopped
+    command: celery --broker=redis://redis:6379/1 flower --port=5555
+    ports:
+      - "5555:5555"
+    depends_on:
+      - redis
+    profiles:
+      - monitoring              # Only starts with: docker-compose --profile monitoring up
+
+volumes:
+  timescaledb_data:
+    driver: local

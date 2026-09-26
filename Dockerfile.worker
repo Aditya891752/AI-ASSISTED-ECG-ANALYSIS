@@ -1,0 +1,36 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# PS-03 ECG Screening — Celery Worker Dockerfile
+# Separate image so workers can be scaled independently from the API
+# ─────────────────────────────────────────────────────────────────────────────
+
+FROM python:3.11-slim AS builder
+
+WORKDIR /build
+
+RUN apt-get update && apt-get install -y --no-install-recommends gcc \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
+
+FROM python:3.11-slim AS runtime
+
+RUN groupadd -r ecg && useradd -r -g ecg ecg
+
+WORKDIR /app
+
+COPY --from=builder /install /usr/local
+COPY app/ ./app/
+
+RUN mkdir -p model && chown -R ecg:ecg /app
+
+USER ecg
+
+# Celery worker consuming the 'batch' queue
+# --concurrency=2: each worker process handles 2 tasks at a time (CPU-bound → keep low)
+CMD ["celery", "-A", "app.workers.celery_app.celery_app", "worker", \
+     "--queues=batch,default", \
+     "--concurrency=2", \
+     "--loglevel=info", \
+     "--prefetch-multiplier=1", \
+     "--max-tasks-per-child=50"]

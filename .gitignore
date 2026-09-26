@@ -1,0 +1,71 @@
+# ── Python ────────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+.tox/
+.venv/
+venv/
+env/
+.env
+
+# ── TypeScript build output ───────────────────────────────────────────────────
+*.tsbuildinfo
+*.d.ts.map
+frontend/vite.config.d.ts
+
+# ── Dataset files (too large for git — rebuild with rebuild_dataset.py) ───────
+*.npy
+*.npy.gz
+
+# ── Zip archives (uploaded separately) ───────────────────────────────────────
+*.zip
+*.tar.gz
+*.tar.bz2
+
+# ── Model files — keep small models, ignore large ones ───────────────────────
+# model/*.pkl and model/*.pt ARE committed (they're the trained weights)
+# Add specific ignores only if files exceed GitHub's 100 MB limit
+# model/model_combined_rf.pkl  ← 15 MB, safe to commit
+
+# ── Logs & temp ───────────────────────────────────────────────────────────────
+*.log
+*.tmp
+*.swp
+.DS_Store
+Thumbs.db
+
+# ── IDE ───────────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.iml
+
+# ── Docker ────────────────────────────────────────────────────────────────────
+.dockerignore
+
+# ── Environment / secrets ─────────────────────────────────────────────────────
+.env
+!.env.example
+
+# ── Frontend ──────────────────────────────────────────────────────────────────
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/coverage/
+
+# ── Testing ───────────────────────────────────────────────────────────────────
+.pytest_cache/
+htmlcov/
+.coverage
+coverage.xml
+
+# ── Jupyter ───────────────────────────────────────────────────────────────────
+.ipynb_checkpoints/
+*.ipynb
