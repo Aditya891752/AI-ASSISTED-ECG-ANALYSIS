@@ -44,7 +44,8 @@ async def health_check(request: Request) -> JSONResponse:
 
     # ── Model ──────────────────────────────────────────────────────────────────
     model_service: ModelService | None = getattr(request.app.state, "model_service", None)
-    if model_service and model_service.is_loaded:
+    model_ok = bool(model_service and model_service.is_loaded)
+    if model_ok:
         components["model"] = ComponentHealth(
             status="ok",
             detail=f"{model_service.model_type} model loaded from {settings.model_path}",
@@ -54,34 +55,42 @@ async def health_check(request: Request) -> JSONResponse:
             status="unavailable",
             detail="Model not loaded — drop model.pkl or model.pt into model/ and restart",
         )
-        overall_ok = False
 
     # ── Database ───────────────────────────────────────────────────────────────
+    db_ok = True
     try:
         db_latency = await ping_db()
         components["database"] = ComponentHealth(status="ok", latency_ms=round(db_latency, 2))
     except Exception as exc:  # noqa: BLE001
-        logger.warning("DB health check failed", exc_info=exc)
+        logger.debug("DB health check failed", error=str(exc))
         components["database"] = ComponentHealth(
             status="unavailable",
-            detail=str(exc),
+            detail="PostgreSQL offline (screening works in standalone mode)",
         )
-        overall_ok = False
+        db_ok = False
 
     # ── Redis ──────────────────────────────────────────────────────────────────
+    redis_ok = True
     try:
         redis_latency = await ping_redis()
         components["redis"] = ComponentHealth(status="ok", latency_ms=round(redis_latency, 2))
     except Exception as exc:  # noqa: BLE001
-        logger.warning("Redis health check failed", exc_info=exc)
+        logger.debug("Redis health check failed", error=str(exc))
         components["redis"] = ComponentHealth(
             status="unavailable",
-            detail=str(exc),
+            detail="Redis offline (caching disabled)",
         )
-        # Redis unavailable degrades caching but API still works — don't mark overall as failed
+        redis_ok = False
 
-    overall_status = "ok" if overall_ok else "unavailable"
-    http_status = status.HTTP_200_OK if overall_ok else status.HTTP_503_SERVICE_UNAVAILABLE
+    if not model_ok:
+        overall_status = "unavailable"
+        http_status = status.HTTP_503_SERVICE_UNAVAILABLE
+    elif not db_ok or not redis_ok:
+        overall_status = "degraded"
+        http_status = status.HTTP_200_OK
+    else:
+        overall_status = "ok"
+        http_status = status.HTTP_200_OK
 
     response = HealthResponse(
         status=overall_status,

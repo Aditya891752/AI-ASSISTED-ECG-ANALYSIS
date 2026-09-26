@@ -44,22 +44,31 @@ $$;
 """
 
 
-async def init_db() -> None:
+async def init_db() -> bool:
     """
     Create all ORM-mapped tables (if they don't exist) and configure
     the TimescaleDB hypertable. Called once during app startup via lifespan.
+    Returns True if DB initialized, False if unavailable.
     """
-    async with engine.begin() as conn:
-        # Create tables defined by the ORM
-        await conn.run_sync(Base.metadata.create_all)
-        logger.info("ORM tables created (or already exist)")
+    try:
+        async with engine.begin() as conn:
+            # Create tables defined by the ORM
+            await conn.run_sync(Base.metadata.create_all)
+            logger.info("ORM tables created (or already exist)")
 
-        # Enable TimescaleDB hypertable (best-effort)
-        try:
-            await conn.execute(text(_HYPERTABLE_SQL))
-            logger.info("TimescaleDB hypertable configured")
-        except Exception as exc:  # noqa: BLE001
-            logger.warning(
-                "TimescaleDB hypertable setup skipped",
-                reason=str(exc),
-            )
+            # Enable TimescaleDB hypertable (best-effort)
+            try:
+                await conn.execute(text(_HYPERTABLE_SQL))
+                logger.info("TimescaleDB hypertable configured")
+            except Exception as exc:  # noqa: BLE001
+                logger.warning(
+                    "TimescaleDB hypertable setup skipped",
+                    reason=str(exc),
+                )
+        return True
+    except Exception as exc:
+        logger.warning(
+            "PostgreSQL database unavailable — running in standalone mode without DB persistence",
+            reason=str(exc),
+        )
+        return False

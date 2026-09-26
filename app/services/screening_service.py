@@ -171,33 +171,36 @@ async def _build_result(
     import datetime
     created_at = datetime.datetime.now(datetime.timezone.utc)
 
-    if persist:
-        orm = ScreeningResultModel(
-            id=result_id,
-            patient_id=request.patient_id,
-            signal_id=signal_id,
-            beats=[b.model_dump(mode="json") for b in beats],
-            total_beats=n_beats,
-            dominant_label=dominant_label,
-            count_n=label_summary["N"],
-            count_s=label_summary["S"],
-            count_v=label_summary["V"],
-            count_f=label_summary["F"],
-            count_q=label_summary["Q"],
-            sample_rate=request.sample_rate,
-            signal_length=len(request.signal),
-            preprocessing_duration_ms=preprocessing_ms,
-            inference_duration_ms=inference_ms,
-            created_at=created_at,
-        )
-        db.add(orm)
-        await db.flush()  # get the ID without committing yet
-        logger.info(
-            "Screening result persisted",
-            result_id=str(result_id),
-            patient_id=request.patient_id,
-            total_beats=n_beats,
-        )
+    if persist and db is not None:
+        try:
+            orm = ScreeningResultModel(
+                id=result_id,
+                patient_id=request.patient_id,
+                signal_id=signal_id,
+                beats=[b.model_dump(mode="json") for b in beats],
+                total_beats=n_beats,
+                dominant_label=dominant_label,
+                count_n=label_summary["N"],
+                count_s=label_summary["S"],
+                count_v=label_summary["V"],
+                count_f=label_summary["F"],
+                count_q=label_summary["Q"],
+                sample_rate=request.sample_rate,
+                signal_length=len(request.signal),
+                preprocessing_duration_ms=preprocessing_ms,
+                inference_duration_ms=inference_ms,
+                created_at=created_at,
+            )
+            db.add(orm)
+            await db.flush()  # get the ID without committing yet
+            logger.info(
+                "Screening result persisted",
+                result_id=str(result_id),
+                patient_id=request.patient_id,
+                total_beats=n_beats,
+            )
+        except Exception as exc:  # noqa: BLE001
+            logger.debug("Database persistence skipped (running in demo mode)", error=str(exc))
 
     return ScreeningResult(
         result_id=result_id,

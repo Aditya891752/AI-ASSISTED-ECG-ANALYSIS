@@ -32,8 +32,12 @@ async def lifespan(app: FastAPI):
     configure_logging(settings.log_level)
     logger.info("Starting PS-03 ECG Screening API", version=settings.app_version)
 
-    await init_db()
-    logger.info("Database initialized")
+    db_ok = await init_db()
+    app.state.db_available = db_ok
+    if db_ok:
+        logger.info("Database initialized")
+    else:
+        logger.info("Running in demo mode without database persistence")
 
     model_service = ModelService(model_path=settings.model_path)
     try:
