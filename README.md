@@ -2,7 +2,7 @@
 
 > **Hackathon Project** · Real-time AI classification of ECG heartbeats into clinical AAMI categories using a trained Random Forest model on 87,000+ beats from the MIT-BIH Arrhythmia + PTB Diagnostic databases.
 
-![CI](https://github.com/YOUR_USERNAME/ps03-ecg-backend/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/Aditya891752/AI-ASSISTED-ECG-ANALYSIS/actions/workflows/ci.yml/badge.svg)
 
 ---
 
