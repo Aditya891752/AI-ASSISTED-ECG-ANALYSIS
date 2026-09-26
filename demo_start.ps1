@@ -75,7 +75,7 @@ if ($backendReady) {
 $frontendDir = Join-Path $baseDir "frontend"
 Write-Host ""
 Write-Host "[2/2] Starting frontend on http://localhost:5173 ..." -ForegroundColor Cyan
-Start-Process cmd.exe -ArgumentList "/k", "node_modules\.bin\vite --port 5173" -WorkingDirectory $frontendDir
+Start-Process cmd.exe -ArgumentList "/k", "node node_modules\vite\bin\vite.js --port 5173" -WorkingDirectory $frontendDir
 
 # 7. Wait for Frontend
 Write-Host "[WAIT] Waiting for frontend to compile..." -ForegroundColor Gray

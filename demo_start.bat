@@ -66,7 +66,7 @@ echo [OK] Backend is ready!
 :: 6. Start Frontend
 echo.
 echo [2/2] Starting frontend on http://localhost:5173 ...
-start "PS03-Frontend" /d "%~dp0frontend" cmd /k "node_modules\.bin\vite --port 5173"
+start "PS03-Frontend" /d "%~dp0frontend" cmd /k "node node_modules\vite\bin\vite.js --port 5173"
 
 :: 7. Wait for Frontend
 echo [WAIT] Waiting for frontend to compile...
