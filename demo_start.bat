@@ -69,17 +69,32 @@ timeout /t 3 /nobreak >nul
 
 echo.
 echo [OPENING] Launching browser...
-start "" "http://localhost:5173"
+start "" "http://localhost:5173/screen"
+
+echo [OPENING] Opening demo signal files folder...
+start "" explorer "%CD%\demo_signals"
 
 echo.
-echo  ┌─────────────────────────────────────────────┐
-echo  │  PS-03 is running!                          │
-echo  │                                             │
-echo  │  Frontend  →  http://localhost:5173         │
-echo  │  API Docs  →  http://localhost:8000/docs    │
-echo  │  Health    →  http://localhost:8000/health  │
-echo  │                                             │
-echo  │  Close the two terminal windows to stop.   │
-echo  └─────────────────────────────────────────────┘
+echo  +-------------------------------------------------+
+echo  ^|  PS-03 is running!                             ^|
+echo  ^|                                                ^|
+echo  ^|  Browser   ->  http://localhost:5173           ^|
+echo  ^|  API Docs  ->  http://localhost:8000/docs      ^|
+echo  ^|                                                ^|
+echo  ^|  DEMO STEPS:                                   ^|
+echo  ^|  1. Drag a file from the Explorer window       ^|
+echo  ^|     that just opened (demo_signals folder)     ^|
+echo  ^|     into the upload box on Screen page         ^|
+echo  ^|  2. Click "Analyse ECG"                       ^|
+echo  ^|  3. See real beat-by-beat classification!      ^|
+echo  ^|                                                ^|
+echo  ^|  Files:                                        ^|
+echo  ^|    demo_normal.csv  -> all N (green)           ^|
+echo  ^|    demo_pvc.csv     -> V beats (red) = PVCs    ^|
+echo  ^|    demo_svt.csv     -> S beats (amber) = SVT   ^|
+echo  ^|    demo_mixed.csv   -> V+F+N mix (15s)         ^|
+echo  ^|                                                ^|
+echo  ^|  Close the two terminal windows to stop.      ^|
+echo  +-------------------------------------------------+
 echo.
 pause
