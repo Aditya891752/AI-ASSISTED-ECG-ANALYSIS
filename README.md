@@ -221,17 +221,6 @@ python evaluate_ptbdb.py --model rf
 
 ---
 
-## 🏆 Hackathon Demo Script
-
-1. **Launch** — double-click `demo_start.bat`
-2. **Dashboard** — show system health, empty charts
-3. **Screen page** — click "Generate demo" → "Analyse ECG" → show waveform + beat table
-4. **Stream page** — "Start Streaming" → watch live waveform + beat ticker update in real time
-5. **History page** — show the result from step 3 appears here with full metadata
-6. **API Docs** — open http://localhost:8000/docs for the judges
-
----
-
 ## 📝 Datasets Used
 
 | Dataset | Source | Beats | Use |
