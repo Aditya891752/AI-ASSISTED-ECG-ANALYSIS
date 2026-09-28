@@ -22,7 +22,9 @@ export function useEcgWebSocket() {
   const connect = useCallback(() => {
     setStatus("connecting");
     const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-    const ws = new WebSocket(`${protocol}//${window.location.host}/api/v1/stream`);
+    const defaultWsUrl = `${protocol}//${window.location.host}/api/v1/stream`;
+    const wsUrl = import.meta.env.VITE_WS_URL || defaultWsUrl;
+    const ws = new WebSocket(wsUrl);
 
     ws.onopen = () => {
       setStatus("connected");

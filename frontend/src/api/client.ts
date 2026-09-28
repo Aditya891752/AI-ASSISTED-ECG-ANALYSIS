@@ -1,9 +1,10 @@
 import axios, { AxiosError } from "axios";
 
-export const API_BASE_URL = "/api/v1";
+const envApiUrl = (import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
+export const API_BASE_URL = `${envApiUrl}/api/v1`;
 
 export const apiClient = axios.create({
-  baseURL: "",
+  baseURL: envApiUrl,
   timeout: 30000,
   headers: { "Content-Type": "application/json" },
 });

@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Eye } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/Card";
+import { Eye, Search, Filter, Calendar, RotateCcw, ChevronLeft, ChevronRight, Activity } from "lucide-react";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
 import { Button } from "@/components/ui/Button";
@@ -42,110 +42,192 @@ export function History() {
   };
 
   return (
-    <div className="space-y-4">
-      <Card>
-        <CardContent className="py-4">
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-3 items-end">
-            <div>
-              <Label>Patient ID</Label>
-              <Input value={patientId} onChange={(e) => setPatientId(e.target.value)} placeholder="Search..." />
+    <div className="space-y-6">
+      {/* Search & Filter Card */}
+      <Card className="border-cyan-500/20">
+        <CardHeader>
+          <div className="flex items-center justify-between w-full">
+            <CardTitle>
+              <Filter className="h-4 w-4 text-cyan-400" />
+              <span>Diagnostic Filter &amp; Audit Query</span>
+            </CardTitle>
+            <span className="text-[11px] font-mono text-slate-400">TimescaleDB Audit Log</span>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 items-end">
+            <div className="space-y-1.5">
+              <Label className="text-xs text-slate-300">Patient Identifier</Label>
+              <Input
+                value={patientId}
+                onChange={(e) => setPatientId(e.target.value)}
+                placeholder="Search patient..."
+                className="font-mono text-xs bg-black/40 border-white/[0.1]"
+              />
             </div>
-            <div>
-              <Label>Label</Label>
+            <div className="space-y-1.5">
+              <Label className="text-xs text-slate-300">Dominant Rhythm</Label>
               <Select value={label} onValueChange={setLabel}>
-                <SelectTrigger><SelectValue placeholder="Any" /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="N">N</SelectItem>
-                  <SelectItem value="S">S</SelectItem>
-                  <SelectItem value="V">V</SelectItem>
-                  <SelectItem value="F">F</SelectItem>
-                  <SelectItem value="Q">Q</SelectItem>
+                <SelectTrigger className="h-9 bg-black/40 border-white/[0.1] text-xs font-mono">
+                  <SelectValue placeholder="All Rhythms" />
+                </SelectTrigger>
+                <SelectContent className="bg-[#0c152a] border-white/[0.1] text-slate-200">
+                  <SelectItem value="ALL" className="text-xs">All Classes</SelectItem>
+                  <SelectItem value="N" className="text-xs font-mono">N &bull; Normal Sinus</SelectItem>
+                  <SelectItem value="S" className="text-xs font-mono">S &bull; Supraventricular</SelectItem>
+                  <SelectItem value="V" className="text-xs font-mono">V &bull; Ventricular PVC</SelectItem>
+                  <SelectItem value="F" className="text-xs font-mono">F &bull; Fusion</SelectItem>
+                  <SelectItem value="Q" className="text-xs font-mono">Q &bull; Paced</SelectItem>
                 </SelectContent>
               </Select>
             </div>
-            <div>
-              <Label>From</Label>
-              <Input type="date" value={fromDt} onChange={(e) => setFromDt(e.target.value)} />
+            <div className="space-y-1.5">
+              <Label className="text-xs text-slate-300">From Date</Label>
+              <Input
+                type="date"
+                value={fromDt}
+                onChange={(e) => setFromDt(e.target.value)}
+                className="font-mono text-xs bg-black/40 border-white/[0.1]"
+              />
             </div>
-            <div>
-              <Label>To</Label>
-              <Input type="date" value={toDt} onChange={(e) => setToDt(e.target.value)} />
+            <div className="space-y-1.5">
+              <Label className="text-xs text-slate-300">To Date</Label>
+              <Input
+                type="date"
+                value={toDt}
+                onChange={(e) => setToDt(e.target.value)}
+                className="font-mono text-xs bg-black/40 border-white/[0.1]"
+              />
             </div>
-            <Button variant="secondary" onClick={clearFilters}>
-              Clear filters
+            <Button
+              variant="secondary"
+              size="md"
+              onClick={clearFilters}
+              className="text-xs h-9 font-semibold"
+            >
+              <RotateCcw className="h-3.5 w-3.5" />
+              <span>Reset Filters</span>
             </Button>
           </div>
-          <div className="mt-3">
-            <Label>Job ID</Label>
-            <Input value={jobId} onChange={(e) => setJobId(e.target.value)} placeholder="Filter by batch job ID..." />
+
+          <div className="pt-2 border-t border-white/[0.04]">
+            <Label className="text-[11px] text-slate-400">Filter by Batch Job ID</Label>
+            <Input
+              value={jobId}
+              onChange={(e) => setJobId(e.target.value)}
+              placeholder="e.g. 804c008b-3905-..."
+              className="font-mono text-xs bg-black/40 border-white/[0.1] mt-1"
+            />
           </div>
         </CardContent>
       </Card>
 
+      {/* Results Table */}
       <Card>
-        <CardContent>
+        <CardContent className="p-0">
           {isLoading ? (
-            <div className="skeleton h-64 rounded-lg" />
+            <div className="p-6 space-y-3">
+              <div className="skeleton rounded-xl h-12 w-full" />
+              <div className="skeleton rounded-xl h-12 w-full" />
+              <div className="skeleton rounded-xl h-12 w-full" />
+            </div>
           ) : !data || data.items.length === 0 ? (
-            <div className="text-sm text-ecg-muted text-center py-16">
-              No results yet — run your first screening above.
+            <div className="text-center py-20 text-slate-400 space-y-3">
+              <Activity className="h-10 w-10 mx-auto text-slate-600 animate-pulse" />
+              <p className="text-sm font-semibold text-slate-300">No matching clinical records found</p>
+              <p className="text-xs text-slate-500">Run a screening or adjust the query filters above.</p>
             </div>
           ) : (
             <>
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="text-left text-ecg-muted border-b border-ecg-border">
-                    <th className="py-2">Timestamp</th>
-                    <th className="py-2">Patient ID</th>
-                    <th className="py-2">Beats</th>
-                    <th className="py-2">Dominant</th>
-                    <th className="py-2">N</th>
-                    <th className="py-2">S</th>
-                    <th className="py-2">V</th>
-                    <th className="py-2">F</th>
-                    <th className="py-2">Q</th>
-                    <th className="py-2">Abnormal%</th>
-                    <th className="py-2">View</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {data.items.map((r) => {
-                    const abnormalPct =
-                      r.total_beats > 0
-                        ? (((r.total_beats - r.label_summary.N) / r.total_beats) * 100).toFixed(1)
-                        : "0.0";
-                    return (
-                      <tr key={r.result_id} className="border-b border-ecg-border/50 hover:bg-ecg-bg">
-                        <td className="py-2">{new Date(r.created_at).toLocaleString()}</td>
-                        <td className="py-2">{r.patient_id ?? "—"}</td>
-                        <td className="py-2">{r.total_beats}</td>
-                        <td className="py-2">{r.dominant_label && <LabelBadge label={r.dominant_label} />}</td>
-                        <td className="py-2 text-xs">{r.label_summary.N}</td>
-                        <td className="py-2 text-xs">{r.label_summary.S}</td>
-                        <td className="py-2 text-xs">{r.label_summary.V}</td>
-                        <td className="py-2 text-xs">{r.label_summary.F}</td>
-                        <td className="py-2 text-xs">{r.label_summary.Q}</td>
-                        <td className="py-2">{abnormalPct}%</td>
-                        <td className="py-2">
-                          <button
-                            onClick={() => setSelected(r)}
-                            className="text-ecg-accent hover:underline inline-flex items-center gap-1"
-                          >
-                            <Eye className="h-3.5 w-3.5" />
-                          </button>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="text-left text-[11px] font-mono font-bold uppercase tracking-wider text-slate-400 bg-white/[0.02] border-b border-white/[0.08]">
+                      <th className="py-3.5 px-4">Recorded At</th>
+                      <th className="py-3.5 px-4">Patient ID</th>
+                      <th className="py-3.5 px-4">Beats</th>
+                      <th className="py-3.5 px-4">Dominant</th>
+                      <th className="py-3.5 px-3 font-mono text-emerald-400">N</th>
+                      <th className="py-3.5 px-3 font-mono text-amber-400">S</th>
+                      <th className="py-3.5 px-3 font-mono text-rose-400">V</th>
+                      <th className="py-3.5 px-3 font-mono text-violet-400">F</th>
+                      <th className="py-3.5 px-3 font-mono text-slate-400">Q</th>
+                      <th className="py-3.5 px-4">Abnormal %</th>
+                      <th className="py-3.5 px-4 text-right">Inspect</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-white/[0.04]">
+                    {data.items.map((r) => {
+                      const abnormalPct =
+                        r.total_beats > 0
+                          ? (((r.total_beats - r.label_summary.N) / r.total_beats) * 100).toFixed(1)
+                          : "0.0";
+                      const isHigh = parseFloat(abnormalPct) > 15;
 
-              <div className="flex items-center justify-between mt-4 text-sm text-ecg-muted">
+                      return (
+                        <tr
+                          key={r.result_id}
+                          className="hover:bg-white/[0.03] transition-colors group cursor-pointer"
+                          onClick={() => setSelected(r)}
+                        >
+                          <td className="py-3.5 px-4 font-mono text-xs text-slate-400">
+                            {new Date(r.created_at).toLocaleString([], {
+                              dateStyle: "short",
+                              timeStyle: "medium",
+                            })}
+                          </td>
+                          <td className="py-3.5 px-4 font-mono font-semibold text-slate-200">
+                            <span className="px-2 py-0.5 rounded-lg bg-white/[0.04] border border-white/[0.06]">
+                              {r.patient_id ?? "ANON"}
+                            </span>
+                          </td>
+                          <td className="py-3.5 px-4 font-mono text-slate-300">
+                            {r.total_beats}
+                          </td>
+                          <td className="py-3.5 px-4">
+                            {r.dominant_label && <LabelBadge label={r.dominant_label} size="sm" />}
+                          </td>
+                          <td className="py-3.5 px-3 font-mono text-xs text-slate-400">{r.label_summary.N}</td>
+                          <td className="py-3.5 px-3 font-mono text-xs text-amber-400/90">{r.label_summary.S}</td>
+                          <td className="py-3.5 px-3 font-mono text-xs text-rose-400 font-semibold">{r.label_summary.V}</td>
+                          <td className="py-3.5 px-3 font-mono text-xs text-violet-400">{r.label_summary.F}</td>
+                          <td className="py-3.5 px-3 font-mono text-xs text-slate-500">{r.label_summary.Q}</td>
+                          <td className="py-3.5 px-4">
+                            <span
+                              className={`font-mono font-semibold text-xs ${
+                                isHigh ? "text-rose-400" : "text-emerald-400"
+                              }`}
+                            >
+                              {abnormalPct}%
+                            </span>
+                          </td>
+                          <td className="py-3.5 px-4 text-right">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelected(r);
+                              }}
+                              className="p-1.5 rounded-lg bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 hover:text-white border border-cyan-500/20 transition-all"
+                            >
+                              <Eye className="h-4 w-4" />
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Pagination controls */}
+              <div className="flex flex-col sm:flex-row items-center justify-between p-4 border-t border-white/[0.06] text-xs text-slate-400 gap-3">
                 <div className="flex items-center gap-2">
                   <span>Page size:</span>
                   <Select value={String(pageSize)} onValueChange={(v) => setPageSize(Number(v))}>
-                    <SelectTrigger className="w-20"><SelectValue /></SelectTrigger>
-                    <SelectContent>
+                    <SelectTrigger className="w-20 h-8 bg-black/40 border-white/[0.1] text-xs font-mono">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-[#0c152a] border-white/[0.1] text-slate-200">
                       <SelectItem value="10">10</SelectItem>
                       <SelectItem value="20">20</SelectItem>
                       <SelectItem value="50">50</SelectItem>
@@ -153,20 +235,29 @@ export function History() {
                   </Select>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span>
-                    Page {data.page} of {data.pages} ({data.total} total)
+                  <span className="font-mono">
+                    Page {data.page} of {data.pages} ({data.total} records)
                   </span>
-                  <Button size="sm" variant="secondary" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>
-                    Prev
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="secondary"
-                    disabled={page >= data.pages}
-                    onClick={() => setPage((p) => p + 1)}
-                  >
-                    Next
-                  </Button>
+                  <div className="flex gap-1">
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      disabled={page <= 1}
+                      onClick={() => setPage((p) => p - 1)}
+                      className="h-8 px-2.5"
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      disabled={page >= data.pages}
+                      onClick={() => setPage((p) => p + 1)}
+                      className="h-8 px-2.5"
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
               </div>
             </>
@@ -174,20 +265,37 @@ export function History() {
         </CardContent>
       </Card>
 
+      {/* Detail Inspection Modal */}
       <Dialog open={!!selected} onOpenChange={(open) => !open && setSelected(null)}>
-        <DialogContent>
+        <DialogContent className="max-w-4xl max-h-[85vh] overflow-y-auto bg-[#0a1124] border-cyan-500/30">
           {selected && (
-            <div className="space-y-4">
-              <DialogTitle className="text-lg font-semibold">
-                Result detail — {selected.patient_id ?? selected.result_id.slice(0, 8)}
-              </DialogTitle>
-              <div className="flex flex-wrap gap-2">
-                {(["N", "S", "V", "F", "Q"] as const).map((l) => (
-                  <LabelBadge key={l} label={l} count={selected.label_summary[l]} />
-                ))}
+            <div className="space-y-5">
+              <div className="flex items-center justify-between border-b border-white/[0.08] pb-3">
+                <div>
+                  <DialogTitle className="text-lg font-extrabold text-white flex items-center gap-2">
+                    <Activity className="h-5 w-5 text-cyan-400" />
+                    <span>Clinical Trace &mdash; {selected.patient_id ?? selected.result_id.slice(0, 8)}</span>
+                  </DialogTitle>
+                  <p className="text-xs text-slate-400 font-mono mt-0.5">
+                    Recorded {new Date(selected.created_at).toLocaleString()} &bull; {selected.total_beats} Total Beats
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  {(["N", "S", "V", "F", "Q"] as const).map((l) => (
+                    <LabelBadge key={l} label={l} count={selected.label_summary[l]} size="sm" />
+                  ))}
+                </div>
               </div>
-              <BeatTimeline beats={selected.beats} />
-              <BeatTable beats={selected.beats} />
+
+              <div className="space-y-3">
+                <div className="text-xs font-mono font-bold uppercase text-slate-400">Beat Rhythm Timeline</div>
+                <BeatTimeline beats={selected.beats} />
+              </div>
+
+              <div className="space-y-3">
+                <div className="text-xs font-mono font-bold uppercase text-slate-400">Beat-by-Beat Classifications</div>
+                <BeatTable beats={selected.beats} />
+              </div>
             </div>
           )}
         </DialogContent>

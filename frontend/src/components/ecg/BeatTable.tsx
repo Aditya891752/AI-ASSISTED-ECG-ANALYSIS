@@ -2,32 +2,19 @@ import { useState, useMemo } from "react";
 import type { BeatClassification } from "@/api/types";
 import { LabelBadge } from "./LabelBadge";
 import { Button } from "@/components/ui/Button";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 15;
 
 function ConfidenceBar({ value }: { value: number }) {
-  return (
-    <div className="w-20 h-1.5 rounded-full bg-ecg-border overflow-hidden">
-      <div
-        className="h-full bg-ecg-accent"
-        style={{ width: `${Math.round(value * 100)}%` }}
-      />
-    </div>
-  );
-}
+  const pct = Math.round(value * 100);
+  const colorClass =
+    pct >= 85 ? "bg-emerald-400" : pct >= 65 ? "bg-amber-400" : "bg-rose-400";
 
-function Sparkline({ values }: { values: number[] }) {
-  const width = 60;
-  const height = 16;
-  if (values.length === 0) return null;
-  const max = Math.max(...values, 1);
-  const points = values
-    .map((v, i) => `${(i / (values.length - 1 || 1)) * width},${height - (v / max) * height}`)
-    .join(" ");
   return (
-    <svg width={width} height={height} className="opacity-80">
-      <polyline points={points} fill="none" stroke="#06b6d4" strokeWidth={1.5} />
-    </svg>
+    <div className="w-20 h-1.5 rounded-full bg-white/[0.08] overflow-hidden">
+      <div className={`h-full ${colorClass} transition-all duration-300`} style={{ width: `${pct}%` }} />
+    </div>
   );
 }
 
@@ -45,82 +32,84 @@ export function BeatTable({ beats, onRowClick }: BeatTableProps) {
     return beats.slice(start, start + PAGE_SIZE);
   }, [beats, page]);
 
-  const recentConfidences = beats.slice(0, 20).map((b) => b.confidence);
-
   if (beats.length === 0) {
     return (
-      <div className="text-sm text-ecg-muted text-center py-10">
-        No beats to display yet — run an analysis above.
+      <div className="text-sm text-slate-500 text-center py-10 font-mono">
+        No classified beats to display yet.
       </div>
     );
   }
 
   return (
-    <div>
-      <table className="w-full text-sm">
-        <thead>
-          <tr className="text-left text-ecg-muted border-b border-ecg-border">
-            <th className="py-2 pr-2">#</th>
-            <th className="py-2 pr-2">Time (s)</th>
-            <th className="py-2 pr-2">Label</th>
-            <th className="py-2 pr-2">Confidence</th>
-            <th className="py-2 pr-2">N%</th>
-            <th className="py-2 pr-2">S%</th>
-            <th className="py-2 pr-2">V%</th>
-            <th className="py-2 pr-2">F%</th>
-            <th className="py-2 pr-2">Q%</th>
-            <th className="py-2 pr-2">Trend</th>
-          </tr>
-        </thead>
-        <tbody>
-          {pageBeats.map((beat) => (
-            <tr
-              key={beat.beat_index}
-              onClick={() => onRowClick?.(beat.beat_index)}
-              className="border-b border-ecg-border/50 hover:bg-ecg-bg cursor-pointer"
-            >
-              <td className="py-2 pr-2 text-ecg-muted">{beat.beat_index}</td>
-              <td className="py-2 pr-2">{beat.r_peak_time_s.toFixed(3)}</td>
-              <td className="py-2 pr-2">
-                <LabelBadge label={beat.label} />
-              </td>
-              <td className="py-2 pr-2">
-                <div className="flex items-center gap-2">
-                  <ConfidenceBar value={beat.confidence} />
-                  <span className="text-xs text-ecg-muted">
-                    {(beat.confidence * 100).toFixed(0)}%
-                  </span>
-                </div>
-              </td>
-              <td className="py-2 pr-2 text-xs">{(beat.probabilities.N * 100).toFixed(0)}</td>
-              <td className="py-2 pr-2 text-xs">{(beat.probabilities.S * 100).toFixed(0)}</td>
-              <td className="py-2 pr-2 text-xs">{(beat.probabilities.V * 100).toFixed(0)}</td>
-              <td className="py-2 pr-2 text-xs">{(beat.probabilities.F * 100).toFixed(0)}</td>
-              <td className="py-2 pr-2 text-xs">{(beat.probabilities.Q * 100).toFixed(0)}</td>
-              <td className="py-2 pr-2">
-                {beat.beat_index === pageBeats[0].beat_index && (
-                  <Sparkline values={recentConfidences} />
-                )}
-              </td>
+    <div className="space-y-3">
+      <div className="overflow-x-auto rounded-xl border border-white/[0.08]">
+        <table className="w-full text-xs font-mono">
+          <thead>
+            <tr className="text-left font-bold uppercase tracking-wider text-slate-400 bg-white/[0.02] border-b border-white/[0.08]">
+              <th className="py-2.5 px-3">#</th>
+              <th className="py-2.5 px-3">Peak (s)</th>
+              <th className="py-2.5 px-3">Class</th>
+              <th className="py-2.5 px-3">Confidence</th>
+              <th className="py-2.5 px-2 text-emerald-400">N%</th>
+              <th className="py-2.5 px-2 text-amber-400">S%</th>
+              <th className="py-2.5 px-2 text-rose-400">V%</th>
+              <th className="py-2.5 px-2 text-violet-400">F%</th>
+              <th className="py-2.5 px-2 text-slate-400">Q%</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-      <div className="flex items-center justify-between mt-3 text-xs text-ecg-muted">
+          </thead>
+          <tbody className="divide-y divide-white/[0.04]">
+            {pageBeats.map((beat) => (
+              <tr
+                key={beat.beat_index}
+                onClick={() => onRowClick?.(beat.beat_index)}
+                className="hover:bg-white/[0.04] cursor-pointer transition-colors group"
+              >
+                <td className="py-2.5 px-3 text-slate-400">{beat.beat_index}</td>
+                <td className="py-2.5 px-3 text-slate-300">{beat.r_peak_time_s.toFixed(3)}s</td>
+                <td className="py-2.5 px-3">
+                  <LabelBadge label={beat.label} size="sm" />
+                </td>
+                <td className="py-2.5 px-3">
+                  <div className="flex items-center gap-2">
+                    <ConfidenceBar value={beat.confidence} />
+                    <span className="text-[11px] font-semibold text-slate-200">
+                      {(beat.confidence * 100).toFixed(0)}%
+                    </span>
+                  </div>
+                </td>
+                <td className="py-2.5 px-2 text-slate-400">{(beat.probabilities.N * 100).toFixed(0)}%</td>
+                <td className="py-2.5 px-2 text-amber-400/90">{(beat.probabilities.S * 100).toFixed(0)}%</td>
+                <td className="py-2.5 px-2 text-rose-400 font-semibold">{(beat.probabilities.V * 100).toFixed(0)}%</td>
+                <td className="py-2.5 px-2 text-violet-400">{(beat.probabilities.F * 100).toFixed(0)}%</td>
+                <td className="py-2.5 px-2 text-slate-500">{(beat.probabilities.Q * 100).toFixed(0)}%</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="flex items-center justify-between text-xs text-slate-400 px-1 font-mono">
         <span>
-          Page {page} of {totalPages} · {beats.length} beats total
+          Page {page} of {totalPages} &bull; {beats.length} total beats
         </span>
-        <div className="flex gap-2">
-          <Button size="sm" variant="secondary" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>
-            Prev
+        <div className="flex gap-1.5">
+          <Button
+            size="sm"
+            variant="secondary"
+            disabled={page <= 1}
+            onClick={() => setPage((p) => p - 1)}
+            className="h-7 px-2"
+          >
+            <ChevronLeft className="h-3.5 w-3.5" />
           </Button>
           <Button
             size="sm"
             variant="secondary"
             disabled={page >= totalPages}
             onClick={() => setPage((p) => p + 1)}
+            className="h-7 px-2"
           >
-            Next
+            <ChevronRight className="h-3.5 w-3.5" />
           </Button>
         </div>
       </div>

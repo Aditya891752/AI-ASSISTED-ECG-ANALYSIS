@@ -27,11 +27,12 @@ WORKDIR /app
 # Copy installed packages from builder
 COPY --from=builder /install /usr/local
 
-# Copy application source
+# Copy application source and model weights
 COPY app/ ./app/
+COPY model/ ./model/
 
-# Create model directory (mount model.pkl at runtime)
-RUN mkdir -p model && chown -R ecg:ecg /app
+# Ensure permissions
+RUN chown -R ecg:ecg /app
 
 USER ecg
 

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { UploadCloud, X, Download } from "lucide-react";
+import { UploadCloud, X, Download, Layers, CheckCircle2, AlertTriangle, ArrowRight, Activity, Zap } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -29,7 +29,7 @@ interface FileEntry {
 export function Batch() {
   const { showToast } = useToast();
   const [files, setFiles] = useState<FileEntry[]>([]);
-  const [patientPrefix, setPatientPrefix] = useState("BATCH");
+  const [patientPrefix, setPatientPrefix] = useState("PT-BATCH");
   const [jobId, setJobId] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
 
@@ -43,6 +43,7 @@ export function Batch() {
       entries.push({ file, sampleCount: parsed.values.length });
     }
     setFiles((prev) => [...prev, ...entries]);
+    showToast("info", "Files queued", `${fileList.length} files added to batch`);
   };
 
   const removeFile = (index: number) => {
@@ -66,7 +67,7 @@ export function Batch() {
       {
         onSuccess: (data) => {
           setJobId(data.job_id);
-          showToast("success", "Batch submitted", `${data.total_signals} signals queued`);
+          showToast("success", "Batch Pipeline Dispatched", `${data.total_signals} patient traces queued for Celery processing`);
         },
         onError: (err) => showToast("error", "Batch submission failed", messageForError(err)),
       }
@@ -115,13 +116,37 @@ export function Batch() {
     : [];
 
   return (
-    <div className="space-y-6 max-w-4xl">
+    <div className="space-y-6 max-w-5xl mx-auto">
+      {/* Top Banner */}
+      <div className="rounded-3xl border border-cyan-500/20 bg-gradient-to-r from-[#0c1833] via-[#091224] to-[#060b17] p-6 shadow-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-2 text-cyan-400 text-xs font-mono font-bold uppercase tracking-wider">
+            <Layers className="h-4 w-4" />
+            <span>High-Throughput Diagnostic Queue</span>
+          </div>
+          <h2 className="text-2xl font-extrabold text-white tracking-tight mt-1">
+            Multi-Patient Holter Batch Processing
+          </h2>
+          <p className="text-xs text-slate-400 mt-1 max-w-xl">
+            Ingest and classify dozens of 24-hour ambulatory Holter recordings asynchronously with celery background workers and automated diagnostic CSV summarization.
+          </p>
+        </div>
+        <div className="shrink-0 flex items-center gap-3">
+          <span className="px-3 py-1.5 rounded-xl border border-white/[0.08] bg-white/[0.03] text-xs font-mono text-cyan-300">
+            Celery &bull; Redis Queue
+          </span>
+        </div>
+      </div>
+
       {!jobId && (
-        <Card>
+        <Card className="border-cyan-500/20">
           <CardHeader>
-            <CardTitle>Step 1 — Upload signals</CardTitle>
+            <CardTitle>
+              <UploadCloud className="h-4 w-4 text-cyan-400" />
+              <span>Step 1 &mdash; Queue Multiple Patient Waveforms</span>
+            </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-5">
             <div
               onDragOver={(e) => {
                 e.preventDefault();
@@ -133,183 +158,199 @@ export function Batch() {
                 setIsDragging(false);
                 if (e.dataTransfer.files.length) addFiles(e.dataTransfer.files);
               }}
-              className={`rounded-lg border-2 border-dashed p-8 text-center ${
-                isDragging ? "border-ecg-accent bg-ecg-accent/5" : "border-ecg-border"
+              className={`rounded-2xl border-2 border-dashed p-10 text-center cursor-pointer transition-all ${
+                isDragging
+                  ? "border-cyan-400 bg-cyan-500/10 shadow-lg shadow-cyan-500/20"
+                  : "border-white/[0.12] hover:border-cyan-500/40 hover:bg-white/[0.02]"
               }`}
             >
-              <UploadCloud className="h-8 w-8 mx-auto text-ecg-muted mb-2" />
-              <p className="text-sm text-ecg-muted mb-2">
-                Drag & drop multiple CSV files — each file is treated as one signal
+              <UploadCloud className="h-10 w-10 mx-auto text-cyan-400 mb-3" />
+              <p className="text-sm font-semibold text-slate-200">
+                Drag &amp; drop multiple ECG CSV recordings
               </p>
-              <input
-                type="file"
-                multiple
-                accept=".csv,.txt"
-                onChange={(e) => e.target.files && addFiles(e.target.files)}
-                className="text-xs"
-              />
+              <p className="text-xs text-slate-400 mt-1 mb-4">
+                Each file is processed as an individual patient screening record
+              </p>
+              <label className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/[0.06] hover:bg-white/[0.1] text-xs font-semibold text-slate-200 border border-white/[0.1] cursor-pointer transition-all">
+                <span>Select Files from Disk</span>
+                <input
+                  type="file"
+                  multiple
+                  accept=".csv,.txt"
+                  onChange={(e) => e.target.files && addFiles(e.target.files)}
+                  className="hidden"
+                />
+              </label>
             </div>
 
             {files.length > 0 && (
-              <ul className="divide-y divide-ecg-border">
+              <div className="rounded-xl border border-white/[0.08] bg-black/30 p-3 max-h-60 overflow-y-auto space-y-1">
+                <div className="text-[11px] font-mono font-bold uppercase tracking-wider text-slate-400 pb-2 px-2 border-b border-white/[0.06]">
+                  Queued Recordings ({files.length})
+                </div>
                 {files.map((entry, i) => (
-                  <li key={i} className="flex items-center justify-between py-2 text-sm">
-                    <span>
+                  <div
+                    key={i}
+                    className="flex items-center justify-between py-1.5 px-2 rounded-lg text-xs hover:bg-white/[0.04] transition-colors"
+                  >
+                    <span className="font-mono text-slate-300">
                       {entry.file.name}{" "}
-                      <span className="text-ecg-muted">({entry.sampleCount ?? "…"} samples)</span>
+                      <span className="text-slate-500">({entry.sampleCount?.toLocaleString() ?? "…"} samples)</span>
                     </span>
-                    <button onClick={() => removeFile(i)} className="text-ecg-muted hover:text-ecg-danger">
-                      <X className="h-4 w-4" />
+                    <button
+                      onClick={() => removeFile(i)}
+                      className="p-1 rounded text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
+                    >
+                      <X className="h-3.5 w-3.5" />
                     </button>
-                  </li>
+                  </div>
                 ))}
-              </ul>
+              </div>
             )}
 
-            <div>
-              <Label>Patient ID prefix</Label>
-              <Input value={patientPrefix} onChange={(e) => setPatientPrefix(e.target.value)} />
-              <p className="text-xs text-ecg-muted mt-1">
-                Signals will be tagged {patientPrefix}-001, {patientPrefix}-002, ...
+            <div className="space-y-1.5">
+              <Label className="text-xs text-slate-300">Patient Identifier Prefix</Label>
+              <Input
+                value={patientPrefix}
+                onChange={(e) => setPatientPrefix(e.target.value)}
+                className="font-mono text-xs bg-black/40 border-white/[0.1]"
+              />
+              <p className="text-[11px] text-slate-500">
+                Signals will be tagged <span className="text-cyan-400 font-mono">{patientPrefix}-001</span>, <span className="text-cyan-400 font-mono">{patientPrefix}-002</span>, etc.
               </p>
             </div>
 
             <Button
-              className="w-full"
+              className="w-full h-11 text-sm font-bold shadow-xl"
               disabled={files.length === 0 || submitBatch.isPending}
               onClick={handleSubmit}
             >
-              {submitBatch.isPending ? "Submitting..." : `Submit batch (${files.length} signals)`}
+              <Zap className="h-4 w-4" />
+              <span>
+                {submitBatch.isPending
+                  ? "Submitting to Queue..."
+                  : `Dispatch Batch Job (${files.length} Patient Traces)`}
+              </span>
             </Button>
           </CardContent>
         </Card>
       )}
 
       {jobId && isRunning && (
-        <Card>
+        <Card className="border-cyan-500/30">
           <CardHeader>
-            <CardTitle>Step 2 — Processing</CardTitle>
+            <CardTitle>
+              <Activity className="h-4 w-4 text-cyan-400 animate-spin" />
+              <span>Step 2 &mdash; Asynchronous Worker Execution</span>
+            </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="w-full h-3 rounded-full bg-ecg-border overflow-hidden">
+          <CardContent className="space-y-4">
+            <div className="w-full h-3 rounded-full bg-white/[0.08] overflow-hidden">
               <div
-                className="h-full bg-ecg-accent transition-all duration-500"
+                className="h-full bg-gradient-to-r from-cyan-500 to-emerald-400 transition-all duration-500"
                 style={{ width: `${jobStatus.data?.progress_pct ?? 0}%` }}
               />
             </div>
-            <p className="text-sm text-ecg-muted">
-              Processing {jobStatus.data?.processed_signals ?? 0} / {jobStatus.data?.total_signals ?? 0} signals...
-            </p>
-            <p className="text-xs text-ecg-muted font-mono">
-              Job ID: {jobId}{" "}
-              <button
-                className="underline"
-                onClick={() => navigator.clipboard.writeText(jobId)}
-              >
-                copy
-              </button>
-            </p>
+            <div className="flex items-center justify-between text-xs font-mono">
+              <span className="text-slate-400">
+                Processed {jobStatus.data?.processed_signals ?? 0} of {jobStatus.data?.total_signals ?? 0} records
+              </span>
+              <span className="text-cyan-300 font-bold">
+                {jobStatus.data?.progress_pct ?? 0}% Complete
+              </span>
+            </div>
           </CardContent>
         </Card>
       )}
 
       {jobId && isComplete && jobStatus.data?.result_summary && (
-        <>
-          <div className="grid grid-cols-5 gap-3">
-            <Card>
-              <CardContent className="py-4 text-center">
-                <p className="text-xs text-ecg-muted">Total beats</p>
-                <p className="text-xl font-bold">{jobStatus.data.result_summary.total_beats}</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="py-4 text-center">
-                <p className="text-xs text-ecg-muted">Abnormal rate</p>
-                <p className="text-xl font-bold text-ecg-danger">
-                  {(jobStatus.data.result_summary.abnormal_beat_rate * 100).toFixed(1)}%
-                </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="py-4 text-center">
-                <p className="text-xs text-ecg-muted">Signals w/ abnormal</p>
-                <p className="text-xl font-bold">
-                  {jobStatus.data.result_summary.signals_with_abnormal_beats}
-                </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="py-4 text-center">
-                <p className="text-xs text-ecg-muted">Failed</p>
-                <p className="text-xl font-bold">{jobStatus.data.result_summary.failed_signals}</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="py-4 text-center">
-                <p className="text-xs text-ecg-muted">Time taken</p>
-                <p className="text-xl font-bold">
-                  {jobStatus.data.started_at && jobStatus.data.completed_at
-                    ? `${(
-                        (new Date(jobStatus.data.completed_at).getTime() -
-                          new Date(jobStatus.data.started_at).getTime()) /
-                        1000
-                      ).toFixed(1)}s`
-                    : "—"}
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-
-          <Card>
+        <div className="space-y-6">
+          <Card className="border-emerald-500/30">
             <CardHeader>
-              <CardTitle>Label breakdown</CardTitle>
+              <div className="flex items-center justify-between w-full">
+                <CardTitle className="text-emerald-400">
+                  <CheckCircle2 className="h-5 w-5" />
+                  <span>Batch Processing Complete &bull; Job {jobId.slice(0, 8)}</span>
+                </CardTitle>
+                <Button variant="success" size="sm" onClick={handleDownloadCsv}>
+                  <Download className="h-3.5 w-3.5" />
+                  <span>Export Diagnostic CSV</span>
+                </Button>
+              </div>
             </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={220}>
-                <BarChart data={labelChartData} layout="vertical">
-                  <CartesianGrid stroke="#1f2d3d" strokeDasharray="3 3" />
-                  <XAxis type="number" stroke="#6b7280" fontSize={11} />
-                  <YAxis type="category" dataKey="name" stroke="#6b7280" fontSize={11} width={80} />
-                  <Tooltip contentStyle={{ background: "#111827", border: "1px solid #1f2d3d" }} />
-                  <Legend />
-                  {(["N", "S", "V", "F", "Q"] as const).map((label) => (
-                    <Bar key={label} dataKey={label} stackId="a" fill={LABEL_COLORS[label]} />
-                  ))}
-                </BarChart>
-              </ResponsiveContainer>
+            <CardContent className="space-y-6">
+              {/* Metric summary grid */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div className="rounded-xl border border-white/[0.08] bg-white/[0.02] p-3 text-center">
+                  <div className="text-[10px] font-mono uppercase text-slate-400">Total Beats</div>
+                  <div className="text-2xl font-bold font-mono text-white mt-1">
+                    {jobStatus.data.result_summary.total_beats.toLocaleString()}
+                  </div>
+                </div>
+                <div className="rounded-xl border border-white/[0.08] bg-white/[0.02] p-3 text-center">
+                  <div className="text-[10px] font-mono uppercase text-slate-400">Abnormal Rate</div>
+                  <div className="text-2xl font-bold font-mono text-amber-400 mt-1">
+                    {(jobStatus.data.result_summary.abnormal_beat_rate * 100).toFixed(1)}%
+                  </div>
+                </div>
+                <div className="rounded-xl border border-white/[0.08] bg-white/[0.02] p-3 text-center">
+                  <div className="text-[10px] font-mono uppercase text-slate-400">Abnormal Traces</div>
+                  <div className="text-2xl font-bold font-mono text-rose-400 mt-1">
+                    {jobStatus.data.result_summary.signals_with_abnormal_beats}
+                  </div>
+                </div>
+                <div className="rounded-xl border border-white/[0.08] bg-white/[0.02] p-3 text-center">
+                  <div className="text-[10px] font-mono uppercase text-slate-400">Failed Records</div>
+                  <div className="text-2xl font-bold font-mono text-slate-400 mt-1">
+                    {jobStatus.data.result_summary.failed_signals}
+                  </div>
+                </div>
+              </div>
+
+              {/* Bar distribution */}
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={labelChartData}>
+                    <CartesianGrid stroke="rgba(255,255,255,0.05)" strokeDasharray="3 3" />
+                    <XAxis dataKey="name" stroke="#64748b" fontSize={11} />
+                    <YAxis stroke="#64748b" fontSize={11} />
+                    <Tooltip
+                      contentStyle={{
+                        background: "#091122",
+                        border: "1px solid rgba(255,255,255,0.1)",
+                        borderRadius: 12,
+                      }}
+                    />
+                    <Legend />
+                    <Bar dataKey="N" name="Normal (N)" fill={LABEL_COLORS.N} />
+                    <Bar dataKey="S" name="Supraventricular (S)" fill={LABEL_COLORS.S} />
+                    <Bar dataKey="V" name="Ventricular (V)" fill={LABEL_COLORS.V} />
+                    <Bar dataKey="F" name="Fusion (F)" fill={LABEL_COLORS.F} />
+                    <Bar dataKey="Q" name="Paced (Q)" fill={LABEL_COLORS.Q} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+
+              <div className="flex justify-end gap-3 pt-3 border-t border-white/[0.06]">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => {
+                    setJobId(null);
+                    setFiles([]);
+                  }}
+                >
+                  Start New Batch
+                </Button>
+                <Link to={`/history?job_id=${jobId}`}>
+                  <Button variant="primary" size="sm">
+                    Inspect in Audit History
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </Button>
+                </Link>
+              </div>
             </CardContent>
           </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle>Results</CardTitle>
-              <Button size="sm" variant="secondary" onClick={handleDownloadCsv}>
-                <Download className="h-4 w-4" /> Download CSV
-              </Button>
-            </CardHeader>
-            <CardContent>
-              <ul className="space-y-1 text-sm">
-                {(jobStatus.data.result_ids ?? []).map((id) => (
-                  <li key={id} className="flex items-center justify-between">
-                    <span className="font-mono text-xs text-ecg-muted">{id}</span>
-                    <Link to="/history" className="text-ecg-accent hover:underline text-xs">
-                      View in history
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </CardContent>
-          </Card>
-
-          <Button variant="secondary" onClick={() => { setJobId(null); setFiles([]); }}>
-            Run another batch
-          </Button>
-        </>
-      )}
-
-      {jobStatus.data?.status === "failed" && (
-        <div className="rounded-lg bg-ecg-danger/10 border border-ecg-danger text-ecg-danger px-4 py-3 text-sm">
-          Batch job failed: {jobStatus.data.error_message ?? "Unknown error"}
         </div>
       )}
     </div>
