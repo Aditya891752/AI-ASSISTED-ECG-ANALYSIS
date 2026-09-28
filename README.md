@@ -1,4 +1,4 @@
-# PS-03 — AI-Assisted ECG Screening System
+#AI-Assisted ECG Screening System
 
 > **Hackathon Project** · Real-time AI classification of ECG heartbeats into clinical AAMI categories using a trained Random Forest model on 87,000+ beats from the MIT-BIH Arrhythmia + PTB Diagnostic databases.
 
@@ -25,7 +25,7 @@ docker-compose up --build
 
 ## 🫀 What It Does
 
-PS-03 classifies ECG heartbeats into **5 clinical categories** (AAMI EC57 standard):
+ classifies ECG heartbeats into **5 clinical categories** (AAMI EC57 standard):
 
 | Label | Class | Description | Color |
 |-------|-------|-------------|-------|
@@ -132,7 +132,7 @@ Signal preprocessing: 4th-order Butterworth bandpass (0.5–40 Hz) → Pan-Tompk
 ## 📦 Project Structure
 
 ```
-ps03-ecg-backend/
+ ecg-backend/
 ├── app/
 │   ├── main.py                 # FastAPI factory
 │   ├── config.py               # Pydantic-Settings
@@ -220,7 +220,6 @@ python evaluate_ptbdb.py --model rf
 ```
 
 ---
-
 ## 📝 Datasets Used
 
 | Dataset | Source | Beats | Use |
@@ -231,11 +230,4 @@ python evaluate_ptbdb.py --model rf
 Both datasets are open-access research datasets from [PhysioNet](https://physionet.org/).
 
 ---
-
-## 👥 Team
-
-**PS-03** — Hackathon submission
-
----
-
 *Built with FastAPI · React · scikit-learn · TimescaleDB · Redis · Docker*
