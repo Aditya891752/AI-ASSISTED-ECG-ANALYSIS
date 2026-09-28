@@ -3,7 +3,6 @@ app/schemas/ecg.py
 ──────────────────
 Pydantic v2 request / response schemas for all ECG screening endpoints.
 """
-from __future__ import annotations
 
 from enum import Enum
 from typing import Annotated

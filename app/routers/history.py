@@ -13,7 +13,6 @@ Supported filters:
 All filters are combinable. Results are ordered newest-first.
 The query uses TimescaleDB-friendly composite indexes for performance.
 """
-from __future__ import annotations
 
 import uuid
 from datetime import datetime

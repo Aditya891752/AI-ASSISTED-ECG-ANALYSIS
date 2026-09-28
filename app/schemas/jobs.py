@@ -3,7 +3,6 @@ app/schemas/jobs.py
 ───────────────────
 Pydantic v2 schemas for async batch job management.
 """
-from __future__ import annotations
 
 from datetime import datetime
 from enum import Enum

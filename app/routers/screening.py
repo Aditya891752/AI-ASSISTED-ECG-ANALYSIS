@@ -4,7 +4,6 @@ app/routers/screening.py
 POST /api/v1/screen        — single ECG signal screening
 POST /api/v1/screen/batch  — async batch screening (returns job ID)
 """
-from __future__ import annotations
 
 import uuid
 

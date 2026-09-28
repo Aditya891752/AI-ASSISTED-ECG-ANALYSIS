@@ -5,7 +5,6 @@ GET /health  — deep health check for model, database, and Redis
 GET /metrics — Prometheus exposition (additional hand-crafted endpoint;
                the prometheus-fastapi-instrumentator also exposes /metrics)
 """
-from __future__ import annotations
 
 import time
 

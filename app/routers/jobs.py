@@ -3,7 +3,6 @@ app/routers/jobs.py
 ────────────────────
 GET /api/v1/jobs/{job_id} — poll async batch job status and results
 """
-from __future__ import annotations
 
 import uuid
 

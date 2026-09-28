@@ -19,7 +19,6 @@ Protocol:
   Client → Server: StreamChunk JSON
   Server → Client: StreamResult JSON | StreamError JSON | {"type":"ping"}
 """
-from __future__ import annotations
 
 import asyncio
 import collections
