@@ -36,11 +36,12 @@ RUN chown -R ecg:ecg /app
 
 USER ecg
 
-EXPOSE 8000
+EXPOSE 10000 8000
 
 # UVICORN_WORKERS defaults to 2; override via env for production
 ENV UVICORN_WORKERS=2
 
-ENV PORT=8000
+ENV PORT=10000
 
-CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000} --workers ${UVICORN_WORKERS}"]
+CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-10000} --workers ${UVICORN_WORKERS}"]
+
