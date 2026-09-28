@@ -1,9 +1,9 @@
 import * as RadixToast from "@radix-ui/react-toast";
 import React, { createContext, useCallback, useContext, useState } from "react";
-import { CheckCircle2, AlertTriangle, XCircle } from "lucide-react";
+import { CheckCircle2, AlertTriangle, XCircle, Info } from "lucide-react";
 import { cn } from "@/utils/cn";
 
-type ToastKind = "success" | "error" | "warning";
+type ToastKind = "success" | "error" | "warning" | "info";
 
 interface ToastItem {
   id: number;
@@ -25,9 +25,10 @@ export function useToast() {
 }
 
 const kindStyles: Record<ToastKind, { border: string; icon: React.ReactNode }> = {
-  success: { border: "border-ecg-success", icon: <CheckCircle2 className="h-5 w-5 text-ecg-success" /> },
-  error: { border: "border-ecg-danger", icon: <XCircle className="h-5 w-5 text-ecg-danger" /> },
-  warning: { border: "border-ecg-warning", icon: <AlertTriangle className="h-5 w-5 text-ecg-warning" /> },
+  success: { border: "border-emerald-500", icon: <CheckCircle2 className="h-5 w-5 text-emerald-400" /> },
+  error: { border: "border-rose-500", icon: <XCircle className="h-5 w-5 text-rose-400" /> },
+  warning: { border: "border-amber-500", icon: <AlertTriangle className="h-5 w-5 text-amber-400" /> },
+  info: { border: "border-cyan-500", icon: <Info className="h-5 w-5 text-cyan-400" /> },
 };
 
 export function ToastProvider({ children }: { children: React.ReactNode }) {
