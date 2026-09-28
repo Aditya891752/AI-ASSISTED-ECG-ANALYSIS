@@ -20,6 +20,7 @@ class Settings(BaseSettings):
         env_file_encoding="utf-8",
         case_sensitive=False,
         extra="ignore",
+        protected_namespaces=(),
     )
 
     # ── App ───────────────────────────────────────────────────────────────────
@@ -69,7 +70,6 @@ class Settings(BaseSettings):
 
     # ── Cache ─────────────────────────────────────────────────────────────────
     result_cache_ttl: int = 300
-    model_cache_ttl: int = 3600
 
     # ── Rate Limits ───────────────────────────────────────────────────────────
     rate_limit_screen: str = "60/minute"

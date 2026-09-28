@@ -41,4 +41,6 @@ EXPOSE 8000
 # UVICORN_WORKERS defaults to 2; override via env for production
 ENV UVICORN_WORKERS=2
 
-CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers ${UVICORN_WORKERS} --log-config /dev/null"]
+ENV PORT=8000
+
+CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000} --workers ${UVICORN_WORKERS}"]

@@ -3,9 +3,7 @@ app/schemas/common.py
 ─────────────────────
 Reusable Pydantic v2 schemas: pagination, errors, health status.
 """
-from __future__ import annotations
-
-from typing import Generic, TypeVar
+from typing import Generic, TypeVar, Optional, Dict, List
 
 from pydantic import BaseModel, Field
 
@@ -15,7 +13,7 @@ T = TypeVar("T")
 class PaginatedResponse(BaseModel, Generic[T]):
     """Generic wrapper for paginated list endpoints."""
 
-    items: list[T]
+    items: List[T]
     total: int = Field(..., description="Total matching records (across all pages)")
     page: int = Field(..., ge=1, description="Current page (1-indexed)")
     page_size: int = Field(..., ge=1, description="Items per page")
