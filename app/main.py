@@ -30,7 +30,7 @@ logger = structlog.get_logger(__name__)
 async def lifespan(app: FastAPI):
     # ── Startup ───────────────────────────────────────────────────────────────
     configure_logging(settings.log_level)
-    logger.info("Starting PS-03 ECG Screening API", version=settings.app_version)
+    logger.info("Starting Cardio AI ECG Screening API", version=settings.app_version)
 
     db_ok = await init_db()
     app.state.db_available = db_ok
@@ -58,7 +58,7 @@ async def lifespan(app: FastAPI):
     yield
 
     # ── Shutdown ──────────────────────────────────────────────────────────────
-    logger.info("Shutting down PS-03 ECG Screening API")
+    logger.info("Shutting down Cardio AI ECG Screening API")
 
 
 def create_app() -> FastAPI:
@@ -66,7 +66,7 @@ def create_app() -> FastAPI:
         title=settings.app_name,
         version=settings.app_version,
         description="""
-## PS-03 AI-Assisted ECG Screening API
+## Cardio AI — AI-Assisted ECG Screening API
 
 Real-time ECG heartbeat classification using the **AAMI EC57 standard** (5 classes):
 

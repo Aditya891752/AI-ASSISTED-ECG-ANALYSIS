@@ -23,7 +23,7 @@ const NAV_ITEMS = [
   { to: "/screen", label: "Single Screen", icon: Activity, badge: "Instant" },
   { to: "/territory-mi", label: "Territory MI", icon: Heart, badge: "12-Lead" },
   { to: "/accuracy", label: "Accuracy Curve", icon: TrendingUp, badge: "2-12L" },
-  { to: "/stream", label: "Live Telemetry", icon: Radio, badge: "360 Hz", isLive: true },
+  { to: "/stream", label: "Live Telemetry", icon: Radio, badge: null, isLive: true },
   { to: "/batch", label: "Batch Queue", icon: Layers, badge: null },
   { to: "/history", label: "Patient Audit", icon: HistoryIcon, badge: null },
 ];
@@ -45,7 +45,7 @@ export function Sidebar() {
       <div className="p-5 border-b border-white/[0.06]">
         <div className="flex items-center gap-3">
           <div className="relative flex items-center justify-center h-10 w-10 rounded-xl overflow-hidden shadow-lg shadow-cyan-500/20 border border-cyan-500/30 bg-[#090d16]">
-            <img src="/bioforge-emblem.svg" alt="Bioforge CardioAI Emblem" className="h-7 w-7 object-contain" />
+            <img src="/cardioai-emblem.svg" alt="CardioAI Emblem" className="h-7 w-7 object-contain" />
             <span className="absolute -top-1 -right-1 flex h-2.5 w-2.5">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75" />
               <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-400 border border-[#091122]" />
@@ -54,12 +54,9 @@ export function Sidebar() {
           <div>
             <div className="flex items-center gap-2">
               <span className="font-extrabold tracking-tight text-white text-base">CARDIO AI</span>
-              <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-cyan-500/15 text-cyan-300 border border-cyan-500/30">
-                PS-03
-              </span>
             </div>
             <div className="text-[11px] font-medium text-slate-400 flex items-center gap-1.5 mt-0.5">
-              <span>Bioforge Clinical</span>
+              <span>Clinical Workstation</span>
               <span className="h-1 w-1 rounded-full bg-slate-600" />
               <span className="text-cyan-400 font-mono">v2.0</span>
             </div>
@@ -168,8 +165,8 @@ export function Sidebar() {
         </div>
 
         <div className="flex items-center justify-between text-[11px] text-slate-400 pt-1 border-t border-white/[0.04]">
-          <span className="truncate">Team Bioforge</span>
-          <span className="text-[10px] text-cyan-400 font-mono">IEEE EMBS</span>
+          <span className="truncate">Clinical Diagnostics</span>
+          <span className="text-[10px] text-cyan-400 font-mono">2–12 Lead</span>
         </div>
       </div>
     </aside>

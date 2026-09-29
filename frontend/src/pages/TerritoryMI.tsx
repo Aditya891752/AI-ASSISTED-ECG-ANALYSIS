@@ -108,10 +108,10 @@ export function TerritoryMI() {
           <div>
             <div className="flex items-center gap-2">
               <span className="text-[10px] font-bold uppercase tracking-wider text-cyan-400 font-mono">
-                BIOFORGE CARDIOAI
+                CARDIO AI
               </span>
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-              <span className="text-[10px] font-mono text-emerald-400">HEALTHNOVA 2026</span>
+              <span className="text-[10px] font-mono text-emerald-400">CLINICAL WORKSTATION</span>
             </div>
             <h1 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
               Territorial MI Coronary Localization

@@ -30,6 +30,8 @@ def get_redis_pool() -> aioredis.ConnectionPool:
             settings.redis_url,
             max_connections=50,
             decode_responses=True,
+            socket_connect_timeout=0.2,
+            socket_timeout=0.2,
         )
     return _pool
 
@@ -98,7 +100,7 @@ async def cache_result(
     try:
         client = get_redis_client()
         ttl = ttl or settings.result_cache_ttl
-        await client.setex(key, ttl, json.dumps(result, default=str))
+        await client.set(key, json.dumps(result, default=str), ex=ttl)
         logger.debug("Cached screening result", key=key, ttl=ttl)
     except Exception as exc:
         logger.debug("Redis cache store skipped", error=str(exc))
