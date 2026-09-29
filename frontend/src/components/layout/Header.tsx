@@ -15,6 +15,16 @@ const PAGE_CONFIG: Record<string, { category: string; title: string; desc: strin
     title: "Single ECG Screening",
     desc: "High-resolution fiducial wave segmentation & 5-class AAMI rhythm triaging",
   },
+  "/territory-mi": {
+    category: "LOCALIZATION",
+    title: "Territorial MI & Culprit Artery",
+    desc: "12-lead coronary mapping, reciprocal ST elevation & anatomical thrombus localization",
+  },
+  "/accuracy": {
+    category: "BENCHMARKS",
+    title: "Variable Lead Accuracy Matrix",
+    desc: "Dynamic 2–12 lead sensitivity/specificity tradeoff & lead derivation matrix",
+  },
   "/stream": {
     category: "TELEMETRY",
     title: "Real-Time WebSocket Stream",

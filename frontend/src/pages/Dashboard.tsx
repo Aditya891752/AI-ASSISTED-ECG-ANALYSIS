@@ -1,447 +1,624 @@
-import { useMemo } from "react";
-import { Link } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import {
-  Eye,
-  AlertTriangle,
   Activity,
+  Heart,
+  AlertTriangle,
+  ArrowRight,
   Zap,
-  ShieldCheck,
-  TrendingUp,
-  HeartPulse,
-  Clock,
-  Sparkles,
-  ArrowUpRight,
+  Grid,
+  Sliders,
+  CheckCircle2,
+  FileText,
+  PauseCircle,
+  PlayCircle,
+  Compass,
 } from "lucide-react";
-import { fetchHealth } from "@/api/health";
-import { fetchHistory } from "@/api/history";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
-import { LabelBadge } from "@/components/ecg/LabelBadge";
-import { LabelDonut } from "@/components/ecg/LabelDonut";
-import {
-  ResponsiveContainer,
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-} from "recharts";
-
-interface MetricCardProps {
-  label: string;
-  value: string;
-  sub: string;
-  icon: React.ElementType;
-  accent: "cyan" | "amber" | "emerald" | "violet";
-  trend?: string;
-}
-
-function MetricCard({ label, value, sub, icon: Icon, accent, trend }: MetricCardProps) {
-  const accentStyles = {
-    cyan: {
-      border: "border-cyan-500/30 hover:border-cyan-400/50",
-      iconBg: "bg-cyan-500/10 text-cyan-400 border-cyan-500/30 shadow-cyan-500/20",
-      valColor: "text-cyan-300",
-      barBg: "bg-cyan-500",
-    },
-    amber: {
-      border: "border-amber-500/30 hover:border-amber-400/50",
-      iconBg: "bg-amber-500/10 text-amber-400 border-amber-500/30 shadow-amber-500/20",
-      valColor: "text-amber-300",
-      barBg: "bg-amber-500",
-    },
-    emerald: {
-      border: "border-emerald-500/30 hover:border-emerald-400/50",
-      iconBg: "bg-emerald-500/10 text-emerald-400 border-emerald-500/30 shadow-emerald-500/20",
-      valColor: "text-emerald-300",
-      barBg: "bg-emerald-500",
-    },
-    violet: {
-      border: "border-violet-500/30 hover:border-violet-400/50",
-      iconBg: "bg-violet-500/10 text-violet-400 border-violet-500/30 shadow-violet-500/20",
-      valColor: "text-violet-300",
-      barBg: "bg-violet-500",
-    },
-  };
-
-  const style = accentStyles[accent];
-
-  return (
-    <Card className={`relative overflow-hidden group transition-all duration-300 ${style.border}`}>
-      <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-current to-transparent opacity-40" />
-      <CardContent className="p-5">
-        <div className="flex items-center justify-between">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
-            {label}
-          </span>
-          <div className={`p-2 rounded-xl border shadow-md ${style.iconBg}`}>
-            <Icon className="h-4 w-4" />
-          </div>
-        </div>
-
-        <div className="mt-3 flex items-baseline gap-2">
-          <span className={`text-3xl font-extrabold font-mono tracking-tight ${style.valColor}`}>
-            {value}
-          </span>
-          {trend && (
-            <span className="inline-flex items-center text-[11px] font-semibold text-emerald-400">
-              <TrendingUp className="h-3 w-3 mr-0.5" />
-              {trend}
-            </span>
-          )}
-        </div>
-
-        <div className="mt-2 text-xs text-slate-400 flex items-center justify-between">
-          <span>{sub}</span>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
-
-function SkeletonCard() {
-  return <div className="skeleton rounded-2xl h-32 w-full border border-white/[0.05]" />;
-}
 
 export function Dashboard() {
-  const { data: health } = useQuery({ queryKey: ["health"], queryFn: fetchHealth, retry: 1 });
-  const { data: recent, isLoading } = useQuery({
-    queryKey: ["history", { page: 1, page_size: 50 }],
-    queryFn: () => fetchHistory({ page: 1, page_size: 50 }),
+  const navigate = useNavigate();
+  const [selectedLeadMode, setSelectedLeadMode] = useState<string>("12");
+  const [oscilloscopeView, setOscilloscopeView] = useState<"matrix" | "rhythm">("matrix");
+  const [calipersActive, setCalipersActive] = useState<boolean>(false);
+  const [isFrozen, setIsFrozen] = useState<boolean>(false);
+  const [inspectedBeat, setInspectedBeat] = useState<{
+    num: number;
+    type: string;
+    conf: string;
+    rr: string;
+    jpt: string;
+    isAbnormal: boolean;
+  }>({
+    num: 14,
+    type: "Premature Ventricular Contraction (PVC)",
+    conf: "96.2% AI Conf",
+    rr: "520 ms (Short)",
+    jpt: "+0.28 mV",
+    isAbnormal: true,
   });
 
-  const todayCount = useMemo(() => {
-    if (!recent) return 0;
-    const today = new Date().toDateString();
-    return recent.items.filter((r) => new Date(r.created_at).toDateString() === today).length;
-  }, [recent]);
-
-  const abnormalRate = useMemo(() => {
-    if (!recent || recent.items.length === 0) return 0;
-    const last100 = recent.items.slice(0, 100);
-    const rates = last100.map((r) => {
-      const abnormal = r.total_beats - r.label_summary.N;
-      return r.total_beats > 0 ? abnormal / r.total_beats : 0;
-    });
-    return (rates.reduce((a, b) => a + b, 0) / rates.length) * 100;
-  }, [recent]);
-
-  const avgInference = useMemo(() => {
-    if (!recent || recent.items.length === 0) return 4.8;
-    const values = recent.items.map((r) => r.inference_duration_ms);
-    return values.reduce((a, b) => a + b, 0) / values.length;
-  }, [recent]);
-
-  const labelCounts = useMemo(() => {
-    const counts = { N: 0, S: 0, V: 0, F: 0, Q: 0 };
-    (recent?.items ?? []).slice(0, 50).forEach((r) => {
-      counts.N += r.label_summary.N;
-      counts.S += r.label_summary.S;
-      counts.V += r.label_summary.V;
-      counts.F += r.label_summary.F;
-      counts.Q += r.label_summary.Q;
-    });
-    return counts;
-  }, [recent]);
-
-  const hourlyData = useMemo(() => {
-    const buckets: Record<string, number> = {};
-    const now = new Date();
-    for (let i = 23; i >= 0; i--) {
-      const hour = new Date(now.getTime() - i * 3600_000);
-      buckets[hour.getHours() + ":00"] = 0;
-    }
-    (recent?.items ?? []).forEach((r) => {
-      const d = new Date(r.created_at);
-      const key = d.getHours() + ":00";
-      if (key in buckets) buckets[key] += 1;
-    });
-    return Object.entries(buckets).map(([hour, count]) => ({ hour, count }));
-  }, [recent]);
-
-  const isDegraded = health && health.status !== "ok";
-
   return (
-    <div className="space-y-6">
-      {/* Degraded Alert if needed */}
-      {isDegraded && (
-        <div className="rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-300 px-5 py-3.5 flex items-center justify-between text-sm shadow-xl backdrop-blur-md">
-          <div className="flex items-center gap-3">
-            <AlertTriangle className="h-5 w-5 text-amber-400" />
-            <span>
-              <strong>System Notice:</strong> Component status degraded —{" "}
-              {Object.entries(health!.components)
-                .filter(([, c]) => c.status !== "ok")
-                .map(([name]) => name)
-                .join(", ")}{" "}
-              running in local fallback mode.
+    <div className="flex flex-col gap-6 max-w-7xl mx-auto pb-16">
+      {/* 1. Patient & Hardware Telemetry Banner */}
+      <div className="w-full bg-slate-900/80 border border-slate-800 rounded-2xl p-4 shadow-xl backdrop-blur-xl flex flex-col gap-3">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-2.5">
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
+            <h2 className="text-lg font-bold text-white font-mono tracking-tight">PT #CF-8042</h2>
+            <span className="text-xs font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-300">M, 58y</span>
+            <span className="text-xs font-mono px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 uppercase">
+              ICU-Bed 04
             </span>
           </div>
-          <span className="text-xs font-mono px-2 py-1 rounded bg-amber-500/20 text-amber-300">
-            FAILOVER ACTIVE
+          <div className="flex items-center gap-2 bg-slate-950 px-3 py-1.5 rounded-xl border border-slate-800">
+            <Zap className="w-4 h-4 text-emerald-400" />
+            <span className="text-xs font-mono text-emerald-400 font-bold">38ms Latency</span>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1 border-t border-slate-800/80">
+          <div className="bg-slate-950/80 rounded-xl p-2.5 border border-slate-800/60">
+            <span className="text-[10px] font-mono text-slate-400 uppercase block">AFE Front-End</span>
+            <span className="text-xs font-mono font-bold text-cyan-400">MAX30001 • AD8232</span>
+          </div>
+          <div className="bg-slate-950/80 rounded-xl p-2.5 border border-slate-800/60">
+            <span className="text-[10px] font-mono text-slate-400 uppercase block">Sampling Rate</span>
+            <span className="text-xs font-mono font-bold text-white">360 Hz (16-bit)</span>
+          </div>
+          <div className="bg-slate-950/80 rounded-xl p-2.5 border border-slate-800/60">
+            <span className="text-[10px] font-mono text-slate-400 uppercase block">Signal Quality</span>
+            <span className="text-xs font-mono font-bold text-emerald-400">99.4% (34.2 dB SNR)</span>
+          </div>
+        </div>
+      </div>
+
+      {/* 2. Critical Triage STEMI Alert Card */}
+      <div className="w-full bg-rose-500/10 border-l-4 border-rose-500 border-y border-r border-slate-800 p-4 rounded-2xl shadow-xl flex flex-col gap-3 relative overflow-hidden">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <AlertTriangle className="w-5 h-5 text-rose-400 animate-bounce" />
+            <span className="text-base font-bold text-rose-400 font-mono tracking-tight">
+              ACUTE STEMI PROTOCOL TRIGGERED
+            </span>
+          </div>
+          <span className="bg-rose-500 text-slate-950 font-mono text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+            Priority Tier-1
           </span>
         </div>
-      )}
-
-      {/* Hero Surveillance Banner */}
-      <div className="relative rounded-3xl p-6 overflow-hidden border border-cyan-500/20 bg-gradient-to-r from-[#0c1833] via-[#0b1428] to-[#070e1c] shadow-2xl">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-          <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-cyan-500/10 text-cyan-300 border border-cyan-500/30">
-              <Sparkles className="h-3.5 w-3.5" />
-              <span>HEALTHNOVA 2026 · IEEE EMBS CHALLENGE</span>
+        <p className="text-xs text-slate-200">
+          Antero-Septal ST Elevation detected in Leads <span className="text-cyan-400 font-bold">V1, V2, V3</span> (+0.28 mV at J-Point+60ms). Culprit vessel localization ready for catheterization protocol.
+        </p>
+        <div className="flex flex-wrap items-center justify-between gap-3 bg-slate-950/90 rounded-xl p-3 border border-slate-800">
+          <div className="flex items-center gap-3">
+            <Compass className="w-5 h-5 text-purple-400" />
+            <div>
+              <span className="text-[10px] font-mono uppercase text-slate-400 block">Culprit Vessel Prediction</span>
+              <span className="text-xs font-mono font-bold text-purple-300">LAD Occlusion • 94.6% Confidence</span>
             </div>
-            <h2 className="text-2xl lg:text-3xl font-extrabold text-white tracking-tight">
-              AI-Assisted ECG Arrhythmia & MI Surveillance
-            </h2>
-            <p className="text-sm text-slate-400 max-w-2xl leading-relaxed">
-              Continuous multi-lead fiducial analysis powered by a 221-dimensional hybrid morphological &amp; RR-interval feature extraction engine with sub-5ms response time.
-            </p>
           </div>
-
-          <div className="flex flex-wrap lg:flex-col items-start lg:items-end gap-3 shrink-0">
-            <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 text-xs font-semibold">
-              <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span>TRIAGE STATUS: NOMINAL</span>
-            </div>
-            <div className="text-[11px] font-mono text-slate-400">
-              PhysioNet MIT-BIH &bull; PTB Diagnostic
-            </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => navigate("/territory-mi")}
+              className="bg-cyan-500 text-slate-950 font-mono text-xs font-bold px-3 py-1.5 rounded-lg hover:bg-cyan-400 flex items-center gap-1.5 shadow-[0_0_12px_rgba(6,182,212,0.4)]"
+            >
+              <span>Territory MI</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+            <button
+              onClick={() => window.print()}
+              className="bg-slate-800 hover:bg-slate-700 text-slate-200 p-1.5 rounded-lg"
+              title="Print Telemetry"
+            >
+              <FileText className="w-4 h-4" />
+            </button>
           </div>
         </div>
       </div>
 
-      {/* 4 Elevated Metric Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {isLoading ? (
-          <>
-            <SkeletonCard />
-            <SkeletonCard />
-            <SkeletonCard />
-            <SkeletonCard />
-          </>
-        ) : (
-          <>
-            <MetricCard
-              label="Screenings Today"
-              value={String(todayCount)}
-              sub="Clinical traces evaluated"
-              icon={Activity}
-              accent="cyan"
-              trend="+14%"
-            />
-            <MetricCard
-              label="Abnormal Ectopics"
-              value={`${abnormalRate.toFixed(1)}%`}
-              sub="PVC & SVT arrhythmia rate"
-              icon={HeartPulse}
-              accent="amber"
-            />
-            <MetricCard
-              label="Inference Latency"
-              value={`${avgInference.toFixed(1)} ms`}
-              sub="Real-time WebSocket throughput"
-              icon={Zap}
-              accent="emerald"
-            />
-            <MetricCard
-              label="Ensemble Accuracy"
-              value="99.1%"
-              sub="AAMI EC57 compliant models"
-              icon={ShieldCheck}
-              accent="violet"
-            />
-          </>
-        )}
-      </div>
-
-      {/* Visualizations Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Label Distribution Donut */}
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between w-full">
-              <CardTitle>
-                <HeartPulse className="h-4 w-4 text-cyan-400" />
-                <span>Arrhythmia Distribution (AAMI 5-Class)</span>
-              </CardTitle>
-              <span className="text-[11px] font-mono text-slate-400">Last 50 Patient Traces</span>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <LabelDonut counts={labelCounts} />
-          </CardContent>
-        </Card>
-
-        {/* Screening Timeline Chart */}
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between w-full">
-              <CardTitle>
-                <Clock className="h-4 w-4 text-cyan-400" />
-                <span>Screening Volume (24h Activity)</span>
-              </CardTitle>
-              <span className="text-[11px] font-mono text-emerald-400">Live Intake</span>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={220}>
-              <AreaChart data={hourlyData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="screenVolumeGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#06b6d4" stopOpacity={0.35} />
-                    <stop offset="95%" stopColor="#06b6d4" stopOpacity={0.0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid stroke="rgba(255,255,255,0.05)" strokeDasharray="3 3" />
-                <XAxis
-                  dataKey="hour"
-                  stroke="#64748b"
-                  fontSize={10}
-                  fontFamily="JetBrains Mono"
-                  interval={3}
-                />
-                <YAxis
-                  stroke="#64748b"
-                  fontSize={10}
-                  fontFamily="JetBrains Mono"
-                  allowDecimals={false}
-                />
-                <Tooltip
-                  content={({ active, payload }) => {
-                    if (active && payload && payload.length) {
-                      return (
-                        <div className="rounded-xl border border-cyan-500/30 bg-[#091122]/95 px-3 py-2 text-xs font-mono shadow-2xl backdrop-blur-md">
-                          <div className="text-slate-400 text-[10px]">{payload[0].payload.hour}</div>
-                          <div className="text-cyan-300 font-bold">
-                            {payload[0].value} screenings
-                          </div>
-                        </div>
-                      );
-                    }
-                    return null;
-                  }}
-                />
-                <Area
-                  type="monotone"
-                  dataKey="count"
-                  stroke="#06b6d4"
-                  strokeWidth={2}
-                  fill="url(#screenVolumeGradient)"
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Recent Screenings Table */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between w-full">
-            <CardTitle>
-              <Activity className="h-4 w-4 text-cyan-400" />
-              <span>Recent Clinical Screenings</span>
-            </CardTitle>
-            <Link
-              to="/history"
-              className="text-xs font-semibold text-cyan-400 hover:text-cyan-300 inline-flex items-center gap-1 group"
-            >
-              <span>View Full Audit Log</span>
-              <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-            </Link>
-          </div>
-        </CardHeader>
-        <CardContent>
-          {isLoading ? (
-            <div className="space-y-3">
-              <div className="skeleton rounded-xl h-10 w-full" />
-              <div className="skeleton rounded-xl h-10 w-full" />
-              <div className="skeleton rounded-xl h-10 w-full" />
-            </div>
-          ) : !recent || recent.items.length === 0 ? (
-            <div className="text-center py-12 text-slate-400 space-y-3">
-              <Activity className="h-10 w-10 mx-auto text-slate-600 animate-pulse" />
-              <p className="text-sm">No clinical results logged yet.</p>
-              <Link
-                to="/screen?demo=1"
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 text-xs font-semibold border border-cyan-500/30 transition-all"
+      {/* 3. Lead Mode Interactive Selector */}
+      <div className="flex flex-col gap-2">
+        <div className="flex items-center justify-between text-xs font-mono">
+          <span className="text-slate-400 uppercase tracking-wider">Acquisition Topology & Synthesized Vector</span>
+          <span className="text-cyan-400 font-bold">IEEE 12-LEAD DERIVATION</span>
+        </div>
+        <div className="grid grid-cols-5 gap-2 bg-slate-950 p-2 rounded-2xl border border-slate-800">
+          {[
+            { mode: "2", label: "2-Lead", sub: "Rural PHC" },
+            { mode: "3", label: "3-Lead", sub: "Axis Screen" },
+            { mode: "5", label: "5-Lead", sub: "Holter" },
+            { mode: "8", label: "8-Lead", sub: "Precordial" },
+            { mode: "12", label: "12-Lead", sub: "Hospital Cart" },
+          ].map((item) => {
+            const isSelected = selectedLeadMode === item.mode;
+            return (
+              <button
+                key={item.mode}
+                onClick={() => setSelectedLeadMode(item.mode)}
+                className={`flex flex-col items-center justify-center py-2.5 rounded-xl transition-all ${
+                  isSelected
+                    ? "bg-cyan-500 text-slate-950 shadow-[0_0_15px_rgba(6,182,212,0.4)] font-bold"
+                    : "text-slate-400 hover:text-white hover:bg-slate-900"
+                }`}
               >
-                <Sparkles className="h-3.5 w-3.5" />
-                Run Instant Demo Analysis
-              </Link>
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="text-left text-[11px] font-mono font-bold uppercase tracking-wider text-slate-400 border-b border-white/[0.08]">
-                    <th className="pb-3 px-3">Timestamp</th>
-                    <th className="pb-3 px-3">Patient ID</th>
-                    <th className="pb-3 px-3">Total Beats</th>
-                    <th className="pb-3 px-3">Dominant Rhythm</th>
-                    <th className="pb-3 px-3">Abnormal %</th>
-                    <th className="pb-3 px-3 text-right">Action</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-white/[0.04]">
-                  {recent.items.slice(0, 8).map((r) => {
-                    const abnormalPct =
-                      r.total_beats > 0
-                        ? (((r.total_beats - r.label_summary.N) / r.total_beats) * 100).toFixed(1)
-                        : "0.0";
-                    const isHighAbnormal = parseFloat(abnormalPct) > 20;
+                <span className="font-mono text-xs">{item.label}</span>
+                <span className={`text-[9px] uppercase tracking-tighter ${isSelected ? "text-slate-900" : "text-slate-500"}`}>
+                  {item.sub}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+        <div className="flex items-center gap-2 bg-slate-900/60 border border-slate-800 px-3 py-1.5 rounded-xl text-xs font-mono text-slate-400">
+          <span className="text-cyan-400 font-bold">Physical:</span>
+          <span>I, II, V1–V6</span>
+          <span className="text-slate-600">•</span>
+          <span className="text-emerald-400 font-bold">Synthesized:</span>
+          <span className="text-emerald-300">III, aVR, aVL, aVF (Einthoven's Law)</span>
+        </div>
+      </div>
 
-                    return (
-                      <tr
-                        key={r.result_id}
-                        className="hover:bg-white/[0.03] transition-colors group"
-                      >
-                        <td className="py-3 px-3 font-mono text-xs text-slate-400">
-                          {new Date(r.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
-                        </td>
-                        <td className="py-3 px-3 font-mono font-semibold text-slate-200">
-                          <span className="px-2 py-0.5 rounded-lg bg-white/[0.04] border border-white/[0.06]">
-                            {r.patient_id ?? "ANON-01"}
-                          </span>
-                        </td>
-                        <td className="py-3 px-3 font-mono text-slate-300">
-                          {r.total_beats.toLocaleString()}
-                        </td>
-                        <td className="py-3 px-3">
-                          {r.dominant_label && (
-                            <LabelBadge label={r.dominant_label} showName size="sm" />
-                          )}
-                        </td>
-                        <td className="py-3 px-3">
-                          <span
-                            className={`font-mono font-semibold text-xs ${
-                              isHighAbnormal ? "text-rose-400" : "text-emerald-400"
-                            }`}
-                          >
-                            {abnormalPct}%
-                          </span>
-                        </td>
-                        <td className="py-3 px-3 text-right">
-                          <Link
-                            to="/history"
-                            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold text-cyan-300 hover:text-white bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/25 transition-all"
-                          >
-                            <Eye className="h-3.5 w-3.5" />
-                            <span>Inspect</span>
-                          </Link>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+      {/* 4. Real-time Calibrated Telemetry Readouts Strip */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+        {/* Heart Rate */}
+        <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-3 flex flex-col justify-between shadow-md">
+          <div className="flex items-center justify-between text-slate-400 text-[10px] font-mono uppercase">
+            <span>Heart Rate</span>
+            <Heart className="w-3.5 h-3.5 text-rose-500 animate-pulse fill-current" />
+          </div>
+          <div className="flex items-baseline gap-1 my-1">
+            <span className="text-3xl font-mono font-bold text-emerald-400">78</span>
+            <span className="text-[10px] font-mono text-slate-400">BPM</span>
+          </div>
+          <span className="text-[9px] font-mono text-emerald-400/80 truncate">Sinus • Conf 99%</span>
+        </div>
+
+        {/* PR Interval */}
+        <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-3 flex flex-col justify-between shadow-md">
+          <span className="text-slate-400 text-[10px] font-mono uppercase">PR Interval</span>
+          <div className="flex items-baseline gap-1 my-1">
+            <span className="text-3xl font-mono font-bold text-white">158</span>
+            <span className="text-[10px] font-mono text-slate-400">ms</span>
+          </div>
+          <span className="text-[9px] font-mono text-emerald-400">Normal Conduction</span>
+        </div>
+
+        {/* QRS Duration */}
+        <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-3 flex flex-col justify-between shadow-md">
+          <span className="text-slate-400 text-[10px] font-mono uppercase">QRS Duration</span>
+          <div className="flex items-baseline gap-1 my-1">
+            <span className="text-3xl font-mono font-bold text-white">92</span>
+            <span className="text-[10px] font-mono text-slate-400">ms</span>
+          </div>
+          <span className="text-[9px] font-mono text-emerald-400">Narrow Complex</span>
+        </div>
+
+        {/* QTc Bazett */}
+        <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-3 flex flex-col justify-between shadow-md">
+          <span className="text-slate-400 text-[10px] font-mono uppercase">QTc (Bazett)</span>
+          <div className="flex items-baseline gap-1 my-1">
+            <span className="text-3xl font-mono font-bold text-white">418</span>
+            <span className="text-[10px] font-mono text-slate-400">ms</span>
+          </div>
+          <span className="text-[9px] font-mono text-emerald-400">&lt; 440ms Normal</span>
+        </div>
+
+        {/* Frontal Axis */}
+        <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-3 flex flex-col justify-between shadow-md">
+          <span className="text-slate-400 text-[10px] font-mono uppercase">Frontal Axis</span>
+          <div className="flex items-baseline gap-1 my-1">
+            <span className="text-3xl font-mono font-bold text-white">+54°</span>
+          </div>
+          <span className="text-[9px] font-mono text-emerald-400">Physiological</span>
+        </div>
+
+        {/* ST Dev V2/V3 */}
+        <div className="bg-rose-500/10 border border-rose-500/30 rounded-2xl p-3 flex flex-col justify-between shadow-md">
+          <span className="text-rose-400 text-[10px] font-mono uppercase font-bold">ST Dev (V2/V3)</span>
+          <div className="flex items-baseline gap-1 my-1">
+            <span className="text-3xl font-mono font-bold text-rose-400">+0.28</span>
+            <span className="text-[10px] font-mono text-rose-400">mV</span>
+          </div>
+          <span className="text-[9px] font-mono text-rose-400 uppercase font-bold animate-pulse">
+            Critical Elevation
+          </span>
+        </div>
+      </div>
+
+      {/* 5. Hero Oscilloscope Surveillance Canvas */}
+      <div className="w-full bg-slate-950 rounded-2xl border border-slate-800 flex flex-col overflow-hidden shadow-2xl">
+        {/* Canvas Top Bar */}
+        <div className="bg-slate-900/90 border-b border-slate-800 px-4 py-2 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setOscilloscopeView("matrix")}
+              className={`px-3 py-1.5 rounded-lg font-mono text-xs font-bold flex items-center gap-1.5 transition-all ${
+                oscilloscopeView === "matrix"
+                  ? "bg-cyan-500 text-slate-950 shadow-[0_0_10px_rgba(6,182,212,0.4)]"
+                  : "text-slate-400 hover:text-white"
+              }`}
+            >
+              <Grid className="w-3.5 h-3.5" />
+              <span>Matrix 3x4 (12-Lead)</span>
+            </button>
+            <button
+              onClick={() => setOscilloscopeView("rhythm")}
+              className={`px-3 py-1.5 rounded-lg font-mono text-xs font-bold flex items-center gap-1.5 transition-all ${
+                oscilloscopeView === "rhythm"
+                  ? "bg-cyan-500 text-slate-950 shadow-[0_0_10px_rgba(6,182,212,0.4)]"
+                  : "text-slate-400 hover:text-white"
+              }`}
+            >
+              <Activity className="w-3.5 h-3.5" />
+              <span>Continuous Lead II Rhythm Strip</span>
+            </button>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setCalipersActive(!calipersActive)}
+              className={`px-3 py-1 rounded-lg text-[10px] font-mono font-bold border transition-all ${
+                calipersActive
+                  ? "bg-cyan-500 text-slate-950 border-cyan-400"
+                  : "bg-slate-800 border-slate-700 text-slate-300 hover:text-white"
+              }`}
+            >
+              {calipersActive ? "Calipers: ON (Δ 200ms)" : "Calipers: OFF"}
+            </button>
+            <button
+              onClick={() => setIsFrozen(!isFrozen)}
+              className={`px-3 py-1 rounded-lg text-[10px] font-mono font-bold flex items-center gap-1 border transition-all ${
+                isFrozen
+                  ? "bg-rose-500 text-white border-rose-400"
+                  : "bg-slate-800 border-slate-700 text-slate-300 hover:text-white"
+              }`}
+            >
+              {isFrozen ? <PlayCircle className="w-3.5 h-3.5" /> : <PauseCircle className="w-3.5 h-3.5" />}
+              <span>{isFrozen ? "RESUME" : "FREEZE"}</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Screen Area with 20px / 4px Reticle Grid */}
+        <div
+          className="relative w-full min-h-[380px] p-4 flex flex-col justify-between select-none"
+          style={{
+            backgroundColor: "#05080f",
+            backgroundImage:
+              "radial-gradient(rgba(76, 215, 246, 0.08) 1px, transparent 1px), radial-gradient(rgba(76, 215, 246, 0.03) 1px, transparent 1px)",
+            backgroundSize: "20px 20px, 4px 4px",
+          }}
+        >
+          {/* Sweep Header */}
+          <div className="flex items-center justify-between text-[10px] font-mono text-slate-400 z-10">
+            <span className="text-cyan-400 font-bold">BIOFORGE SYNAPSE-IV CLINICAL WORKSTATION</span>
+            <span>25 mm/s • 10 mm/mV • 0.05–150 Hz</span>
+            <div className="flex items-center gap-1 text-emerald-400">
+              <span className={`w-1.5 h-1.5 rounded-full bg-emerald-400 ${isFrozen ? "" : "animate-pulse"}`} />
+              <span>{isFrozen ? "FREEZE ACTIVE" : "SWEEP ACTIVE"}</span>
+            </div>
+          </div>
+
+          {/* VIEW 1: Matrix 3x4 */}
+          {oscilloscopeView === "matrix" && (
+            <div className="grid grid-cols-3 grid-rows-4 gap-2 my-2 w-full h-[300px]">
+              {/* I, aVR, V1 */}
+              <div className="bg-slate-900/40 border border-slate-800/80 rounded-xl p-2 flex flex-col justify-between">
+                <span className="text-[10px] font-mono font-bold text-cyan-400">Lead I</span>
+                <svg className="w-full h-12 stroke-cyan-400 fill-none" preserveAspectRatio="none" viewBox="0 0 100 36">
+                  <path d="M0,18 L15,18 L18,16 L21,18 L32,18 L35,22 L38,3 L41,31 L44,18 L52,18 L58,13 L66,18 L100,18" strokeWidth="1.6" />
+                </svg>
+              </div>
+              <div className="bg-slate-900/40 border border-slate-800/80 rounded-xl p-2 flex flex-col justify-between">
+                <span className="text-[10px] font-mono font-bold text-slate-400">Lead aVR</span>
+                <svg className="w-full h-12 stroke-slate-400 fill-none" preserveAspectRatio="none" viewBox="0 0 100 36">
+                  <path d="M0,18 L15,18 L18,20 L21,18 L32,18 L35,14 L38,33 L41,7 L44,18 L52,18 L58,23 L66,18 L100,18" strokeWidth="1.5" />
+                </svg>
+              </div>
+              <div className="bg-slate-900/40 border border-slate-800/80 rounded-xl p-2 flex flex-col justify-between">
+                <span className="text-[10px] font-mono font-bold text-cyan-400">Lead V1</span>
+                <svg className="w-full h-12 stroke-cyan-400 fill-none" preserveAspectRatio="none" viewBox="0 0 100 36">
+                  <path d="M0,18 L15,18 L18,17 L21,18 L33,18 L36,15 L39,32 L43,18 L52,18 L58,15 L66,18 L100,18" strokeWidth="1.5" />
+                </svg>
+              </div>
+
+              {/* II, aVL, V2 (STEMI!) */}
+              <div className="bg-slate-900/40 border border-slate-800/80 rounded-xl p-2 flex flex-col justify-between">
+                <span className="text-[10px] font-mono font-bold text-emerald-400">Lead II (Rhythm)</span>
+                <svg className="w-full h-12 stroke-emerald-400 fill-none" preserveAspectRatio="none" viewBox="0 0 100 36">
+                  <path d="M0,18 L15,18 L18,15 L21,18 L32,18 L35,23 L38,1 L41,33 L44,18 L52,18 L58,11 L66,18 L100,18" strokeWidth="1.6" />
+                </svg>
+              </div>
+              <div className="bg-slate-900/40 border border-slate-800/80 rounded-xl p-2 flex flex-col justify-between">
+                <span className="text-[10px] font-mono font-bold text-slate-400">Lead aVL</span>
+                <svg className="w-full h-12 stroke-slate-400 fill-none" preserveAspectRatio="none" viewBox="0 0 100 36">
+                  <path d="M0,18 L15,18 L18,17 L21,18 L32,18 L35,20 L38,9 L41,26 L44,18 L52,18 L58,15 L66,18 L100,18" strokeWidth="1.5" />
+                </svg>
+              </div>
+              <div className="bg-rose-500/10 border border-rose-500/40 rounded-xl p-2 flex flex-col justify-between">
+                <div className="flex items-center justify-between text-[10px] font-mono text-rose-400 font-bold">
+                  <span>Lead V2 • STEMI</span>
+                  <span>+0.28mV</span>
+                </div>
+                <svg className="w-full h-12 stroke-rose-400 fill-none" preserveAspectRatio="none" viewBox="0 0 100 36">
+                  <path d="M0,18 L15,18 L18,16 L21,18 L32,18 L34,22 L37,2 L40,28 L43,10 L55,7 L64,13 L70,18 L100,18" strokeWidth="1.8" />
+                </svg>
+              </div>
+
+              {/* III, aVF, V3 (STEMI!) */}
+              <div className="bg-slate-900/40 border border-slate-800/80 rounded-xl p-2 flex flex-col justify-between">
+                <span className="text-[10px] font-mono font-bold text-slate-400">Lead III</span>
+                <svg className="w-full h-12 stroke-slate-400 fill-none" preserveAspectRatio="none" viewBox="0 0 100 36">
+                  <path d="M0,18 L15,18 L18,17 L21,18 L32,18 L35,21 L38,11 L41,25 L44,18 L52,18 L58,16 L66,18 L100,18" strokeWidth="1.5" />
+                </svg>
+              </div>
+              <div className="bg-slate-900/40 border border-slate-800/80 rounded-xl p-2 flex flex-col justify-between">
+                <span className="text-[10px] font-mono font-bold text-slate-400">Lead aVF</span>
+                <svg className="w-full h-12 stroke-slate-400 fill-none" preserveAspectRatio="none" viewBox="0 0 100 36">
+                  <path d="M0,18 L15,18 L18,16 L21,18 L32,18 L35,21 L38,5 L41,30 L44,18 L52,18 L58,13 L66,18 L100,18" strokeWidth="1.5" />
+                </svg>
+              </div>
+              <div className="bg-rose-500/10 border border-rose-500/40 rounded-xl p-2 flex flex-col justify-between">
+                <div className="flex items-center justify-between text-[10px] font-mono text-rose-400 font-bold">
+                  <span>Lead V3 • STEMI</span>
+                  <span>+0.25mV</span>
+                </div>
+                <svg className="w-full h-12 stroke-rose-400 fill-none" preserveAspectRatio="none" viewBox="0 0 100 36">
+                  <path d="M0,18 L15,18 L18,16 L21,18 L32,18 L34,20 L37,4 L40,29 L43,9 L54,6 L63,12 L70,18 L100,18" strokeWidth="1.8" />
+                </svg>
+              </div>
+
+              {/* V4, V5, V6 */}
+              <div className="bg-slate-900/40 border border-slate-800/80 rounded-xl p-2 flex flex-col justify-between">
+                <span className="text-[10px] font-mono font-bold text-cyan-400">Lead V4</span>
+                <svg className="w-full h-12 stroke-cyan-400 fill-none" preserveAspectRatio="none" viewBox="0 0 100 36">
+                  <path d="M0,18 L15,18 L18,16 L21,18 L32,18 L35,21 L38,4 L41,29 L44,18 L52,18 L58,12 L66,18 L100,18" strokeWidth="1.5" />
+                </svg>
+              </div>
+              <div className="bg-slate-900/40 border border-slate-800/80 rounded-xl p-2 flex flex-col justify-between">
+                <span className="text-[10px] font-mono font-bold text-cyan-400">Lead V5</span>
+                <svg className="w-full h-12 stroke-cyan-400 fill-none" preserveAspectRatio="none" viewBox="0 0 100 36">
+                  <path d="M0,18 L15,18 L18,16 L21,18 L32,18 L35,21 L38,3 L41,30 L44,18 L52,18 L58,13 L66,18 L100,18" strokeWidth="1.5" />
+                </svg>
+              </div>
+              <div className="bg-slate-900/40 border border-slate-800/80 rounded-xl p-2 flex flex-col justify-between">
+                <span className="text-[10px] font-mono font-bold text-cyan-400">Lead V6</span>
+                <svg className="w-full h-12 stroke-cyan-400 fill-none" preserveAspectRatio="none" viewBox="0 0 100 36">
+                  <path d="M0,18 L15,18 L18,16 L21,18 L32,18 L35,20 L38,5 L41,28 L44,18 L52,18 L58,14 L66,18 L100,18" strokeWidth="1.5" />
+                </svg>
+              </div>
             </div>
           )}
-        </CardContent>
-      </Card>
+
+          {/* VIEW 2: Continuous Long Rhythm Strip II */}
+          {oscilloscopeView === "rhythm" && (
+            <div className="relative w-full h-[300px] flex flex-col justify-center">
+              <div className="relative w-full h-44 flex items-center">
+                <svg className="w-full h-full stroke-emerald-400 fill-none" preserveAspectRatio="none" viewBox="0 0 600 100">
+                  <path
+                    d="M0,50 L30,50 L35,46 L40,50 L60,50 L64,58 L70,8 L76,82 L82,50 L98,50 L110,38 L126,50 
+                       L160,50 L165,46 L170,50 L190,50 L194,58 L200,8 L206,82 L212,50 L228,50 L240,38 L256,50
+                       L280,50 L290,75 L300,12 L315,92 L325,50 L345,65 L365,50 
+                       L390,50 L395,46 L400,50 L420,50 L424,58 L430,8 L436,82 L442,50 L458,50 L470,38 L486,50
+                       L510,50 L514,40 L519,50 L530,50 L534,56 L539,12 L544,78 L549,50 L562,50 L572,40 L585,50 L600,50"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+
+                {/* Beat Pins */}
+                <div
+                  onClick={() =>
+                    setInspectedBeat({
+                      num: 12,
+                      type: "Normal Sinus (N)",
+                      conf: "99.8% AI Conf",
+                      rr: "772 ms",
+                      jpt: "0.00 mV",
+                      isAbnormal: false,
+                    })
+                  }
+                  className="absolute left-[11%] top-4 cursor-pointer flex flex-col items-center group"
+                >
+                  <span className="px-1.5 py-0.5 rounded-full bg-emerald-500 text-slate-950 font-mono text-[9px] font-bold shadow-md group-hover:scale-110 transition-transform">
+                    N
+                  </span>
+                  <div className="w-px h-28 bg-emerald-500/40" />
+                </div>
+
+                <div
+                  onClick={() =>
+                    setInspectedBeat({
+                      num: 13,
+                      type: "Normal Sinus (N)",
+                      conf: "99.4% AI Conf",
+                      rr: "768 ms",
+                      jpt: "0.00 mV",
+                      isAbnormal: false,
+                    })
+                  }
+                  className="absolute left-[33%] top-4 cursor-pointer flex flex-col items-center group"
+                >
+                  <span className="px-1.5 py-0.5 rounded-full bg-emerald-500 text-slate-950 font-mono text-[9px] font-bold shadow-md group-hover:scale-110 transition-transform">
+                    N
+                  </span>
+                  <div className="w-px h-28 bg-emerald-500/40" />
+                </div>
+
+                {/* PVC Pin (Abnormal) */}
+                <div
+                  onClick={() =>
+                    setInspectedBeat({
+                      num: 14,
+                      type: "Premature Ventricular Contraction (PVC)",
+                      conf: "96.2% AI Conf",
+                      rr: "520 ms (Short)",
+                      jpt: "+0.28 mV",
+                      isAbnormal: true,
+                    })
+                  }
+                  className="absolute left-[50%] top-4 cursor-pointer flex flex-col items-center group"
+                >
+                  <span className="px-1.5 py-0.5 rounded-full bg-rose-500 text-white font-mono text-[9px] font-bold shadow-lg animate-pulse group-hover:scale-110 transition-transform">
+                    V
+                  </span>
+                  <div className="w-px h-28 bg-rose-500/70" />
+                </div>
+
+                <div
+                  onClick={() =>
+                    setInspectedBeat({
+                      num: 15,
+                      type: "Compensatory Normal (N)",
+                      conf: "99.1% AI Conf",
+                      rr: "910 ms (Compensatory)",
+                      jpt: "0.00 mV",
+                      isAbnormal: false,
+                    })
+                  }
+                  className="absolute left-[71%] top-4 cursor-pointer flex flex-col items-center group"
+                >
+                  <span className="px-1.5 py-0.5 rounded-full bg-emerald-500 text-slate-950 font-mono text-[9px] font-bold shadow-md group-hover:scale-110 transition-transform">
+                    N
+                  </span>
+                  <div className="w-px h-28 bg-emerald-500/40" />
+                </div>
+
+                <div
+                  onClick={() =>
+                    setInspectedBeat({
+                      num: 16,
+                      type: "Premature Atrial Complex (PAC)",
+                      conf: "91.7% AI Conf",
+                      rr: "610 ms",
+                      jpt: "+0.02 mV",
+                      isAbnormal: true,
+                    })
+                  }
+                  className="absolute left-[88%] top-4 cursor-pointer flex flex-col items-center group"
+                >
+                  <span className="px-1.5 py-0.5 rounded-full bg-purple-500 text-white font-mono text-[9px] font-bold shadow-md group-hover:scale-110 transition-transform">
+                    S
+                  </span>
+                  <div className="w-px h-28 bg-purple-500/50" />
+                </div>
+              </div>
+
+              {/* Time axis */}
+              <div className="flex items-center justify-between text-[10px] font-mono text-slate-500 px-2">
+                <span>0.0s</span>
+                <span>1.5s</span>
+                <span className="text-rose-400 font-bold">3.0s (PVC Trigger)</span>
+                <span>4.5s</span>
+                <span>6.0s</span>
+              </div>
+            </div>
+          )}
+
+          {/* Caliper Measurement Overlay */}
+          {calipersActive && (
+            <div className="absolute inset-0 pointer-events-none z-20">
+              <div className="absolute left-1/3 top-0 bottom-0 w-px bg-cyan-400 shadow-[0_0_8px_#06b6d4] flex items-center justify-center">
+                <span className="bg-cyan-500 text-slate-950 font-mono text-[9px] px-1.5 py-0.5 rounded font-bold -translate-y-12">
+                  C1: 0ms
+                </span>
+              </div>
+              <div className="absolute left-1/2 top-0 bottom-0 w-px bg-cyan-400 shadow-[0_0_8px_#06b6d4] flex items-center justify-center">
+                <span className="bg-cyan-500 text-slate-950 font-mono text-[9px] px-1.5 py-0.5 rounded font-bold -translate-y-12">
+                  C2: +200ms
+                </span>
+              </div>
+              <div className="absolute top-1/2 left-1/3 right-1/2 h-px bg-cyan-400/80 flex items-center justify-center">
+                <span className="bg-slate-900 text-cyan-300 border border-cyan-500/40 font-mono text-[9px] px-2 py-0.5 rounded -translate-y-4">
+                  Δ 200 ms (5.0mm)
+                </span>
+              </div>
+            </div>
+          )}
+
+          {/* Canvas Footer */}
+          <div className="flex items-center justify-between text-[10px] font-mono text-slate-500 z-10 border-t border-slate-900 pt-1">
+            <span>DSP NOTCH: 50/60Hz ACTIVE • BESSEL HIGHPASS 0.05Hz</span>
+            <span className="text-cyan-400 font-bold">HRV SDNN: 42ms</span>
+          </div>
+        </div>
+      </div>
+
+      {/* 6. Dynamic Beat Inspection Popover Callout */}
+      <div className="w-full bg-slate-900/80 border border-slate-800 rounded-2xl p-4 shadow-xl flex flex-col gap-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 text-cyan-400" />
+            <h3 className="text-sm font-bold text-white font-mono">
+              Beat #{inspectedBeat.num} Morphological Inspection
+            </h3>
+          </div>
+          <span
+            className={`text-xs font-mono font-bold px-2.5 py-0.5 rounded-full ${
+              inspectedBeat.isAbnormal
+                ? "bg-rose-500/20 text-rose-300 border border-rose-500/30"
+                : "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
+            }`}
+          >
+            {inspectedBeat.type}
+          </span>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+          <div className="bg-slate-950 p-3 rounded-xl border border-slate-800/80">
+            <span className="text-[10px] font-mono text-slate-400 uppercase block">Model Confidence</span>
+            <span className="text-sm font-mono font-bold text-cyan-400">{inspectedBeat.conf}</span>
+          </div>
+          <div className="bg-slate-950 p-3 rounded-xl border border-slate-800/80">
+            <span className="text-[10px] font-mono text-slate-400 uppercase block">Preceding RR Interval</span>
+            <span className="text-sm font-mono font-bold text-white">{inspectedBeat.rr}</span>
+          </div>
+          <div className="bg-slate-950 p-3 rounded-xl border border-slate-800/80">
+            <span className="text-[10px] font-mono text-slate-400 uppercase block">J-Point Offset</span>
+            <span
+              className={`text-sm font-mono font-bold ${
+                inspectedBeat.jpt.startsWith("+") ? "text-rose-400" : "text-emerald-400"
+              }`}
+            >
+              {inspectedBeat.jpt}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* 7. Hardware Calibration & Gain Controls Footer Drawer */}
+      <div className="w-full bg-slate-900/60 border border-slate-800 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-4">
+        <div className="flex items-center gap-6 text-xs font-mono">
+          <div>
+            <span className="text-[10px] text-slate-500 uppercase block">Speed</span>
+            <span className="text-white font-bold">25 mm/s</span>
+          </div>
+          <div className="h-6 w-px bg-slate-800" />
+          <div>
+            <span className="text-[10px] text-slate-500 uppercase block">Gain</span>
+            <span className="text-white font-bold">10 mm/mV</span>
+          </div>
+          <div className="h-6 w-px bg-slate-800" />
+          <div>
+            <span className="text-[10px] text-slate-500 uppercase block">Filter Band</span>
+            <span className="text-emerald-400 font-bold">0.05–150 Hz</span>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <Link
+            to="/accuracy"
+            className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-mono font-bold transition-colors"
+          >
+            Accuracy & Presets
+          </Link>
+          <Link
+            to="/territory-mi"
+            className="px-4 py-2 rounded-xl bg-cyan-500 text-slate-950 text-xs font-mono font-bold hover:bg-cyan-400 transition-colors shadow-[0_0_12px_rgba(6,182,212,0.3)]"
+          >
+            Territory MI
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }

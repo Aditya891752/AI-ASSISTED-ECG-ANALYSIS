@@ -17,8 +17,30 @@ export interface HealthResponse {
   };
 }
 
+export interface AccuracyPoint {
+  mode: string;
+  channels: number;
+  accuracy: number;
+  tier: string;
+}
+
+export interface MILocalization {
+  available: boolean;
+  status: string;
+  reason?: string;
+  territory?: string | null;
+  elevation_detected?: boolean;
+  affected_leads?: string[];
+  culprit_artery?: string | null;
+  max_elevation_mv?: number;
+  clinical_summary?: string;
+}
+
 export interface ScreeningRequest {
-  signal: number[];
+  signal?: number[];
+  signals?: Record<string, number[]>;
+  lead_mode?: string;
+  leads?: string[];
   sample_rate: number;
   patient_id?: string;
   signal_id?: string;
@@ -62,7 +84,18 @@ export interface ScreeningResult {
   preprocessing_duration_ms: number;
   inference_duration_ms: number;
   created_at: string;
+
+  // Variable 2–12 Lead Support
+  lead_mode?: string;
+  leads_analyzed?: string[];
+  derived_leads?: string[];
+  lead_count?: number;
+  benchmark_accuracy?: number;
+  clinical_tier?: string;
+  mi_localization?: MILocalization | null;
+  accuracy_curve?: AccuracyPoint[];
 }
+
 
 export interface BatchSignalInput {
   signal: number[];
