@@ -1,0 +1,114 @@
+{
+  "id": "PT #MI-1092",
+  "name": "Eleanor Vance",
+  "age": 64,
+  "sex": "F",
+  "bed": "CCU-Bed 02",
+  "primaryDiagnosis": "Acute Inferior Wall STEMI (RCA Occlusion)",
+  "priorityTier": "Tier-1 (Stat)",
+  "alertTitle": "INFERIOR MYOCARDIAL INFARCTION ALERT",
+  "alertDesc": "ST-segment elevation detected in limb leads II, III, aVF (+0.34 mV). Reciprocal ST depression marked in I, aVL. Right ventricular extension screening recommended.",
+  "alertType": "critical",
+  "culpritVessel": "RCA (Proximal Right Coronary Artery)",
+  "culpritConfidence": "97.2% Model Confidence",
+  "vitals": {
+    "hr": 58,
+    "hrStatus": "Sinus Bradycardia / Ischemic",
+    "bp": "110/68",
+    "spo2": 97,
+    "rr": 18,
+    "temp": "36.8",
+    "pr": 210,
+    "qrs": 92,
+    "qtc": 460,
+    "axis": "+105\u00b0 (Right Axis)",
+    "stDev": "+0.34 mV",
+    "stDevClass": "text-rose-400 font-bold"
+  },
+  "leadsElevated": [
+    "II",
+    "III",
+    "aVF"
+  ],
+  "leadsReciprocal": [
+    "I",
+    "aVL"
+  ],
+  "sampleBeats": [
+    {
+      "num": 8,
+      "type": "Normal Sinus (N)",
+      "conf": "99.1%",
+      "rr": "1034 ms",
+      "jpt": "+0.32 mV",
+      "isAbnormal": false,
+      "classCode": "N",
+      "probabilities": {
+        "N": 0.991,
+        "S": 0.005,
+        "V": 0.003,
+        "F": 0.001
+      }
+    },
+    {
+      "num": 9,
+      "type": "Sinus Bradycardia (N)",
+      "conf": "98.7%",
+      "rr": "1040 ms",
+      "jpt": "+0.36 mV",
+      "isAbnormal": false,
+      "classCode": "N",
+      "probabilities": {
+        "N": 0.987,
+        "S": 0.006,
+        "V": 0.004,
+        "F": 0.003
+      }
+    },
+    {
+      "num": 10,
+      "type": "Junctional Escape Beat (S)",
+      "conf": "91.8%",
+      "rr": "1120 ms (Escape)",
+      "jpt": "+0.32 mV",
+      "isAbnormal": true,
+      "classCode": "S",
+      "probabilities": {
+        "N": 0.061,
+        "S": 0.918,
+        "V": 0.012,
+        "F": 0.009
+      }
+    },
+    {
+      "num": 11,
+      "type": "Premature Ventricular Ectopic (V)",
+      "conf": "97.1%",
+      "rr": "620 ms",
+      "jpt": "+0.38 mV",
+      "isAbnormal": true,
+      "classCode": "V",
+      "probabilities": {
+        "N": 0.01,
+        "S": 0.008,
+        "V": 0.971,
+        "F": 0.011
+      }
+    },
+    {
+      "num": 12,
+      "type": "Post-Ectopic Recovery (N)",
+      "conf": "98.8%",
+      "rr": "1160 ms",
+      "jpt": "+0.35 mV",
+      "isAbnormal": false,
+      "classCode": "N",
+      "probabilities": {
+        "N": 0.988,
+        "S": 0.004,
+        "V": 0.005,
+        "F": 0.003
+      }
+    }
+  ]
+}

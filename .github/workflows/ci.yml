@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [main, dev]
+    branches: [main, dev, feature/v2-redesign]
   pull_request:
-    branches: [main]
+    branches: [main, feature/v2-redesign]
 
 jobs:
   # ── Backend: lint + type-check ────────────────────────────────────────────

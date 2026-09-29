@@ -72,6 +72,6 @@ coverage.xml
 
 # ── Local Raw Datasets & Cache ────────────────────────────────────────────────
 ptbxl_database.csv
-data/
+data/ptbxl_cache/
 model/*backup*.pkl
 

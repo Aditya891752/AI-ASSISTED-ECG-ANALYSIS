@@ -1,0 +1,107 @@
+{
+  "id": "PT #WP-6720",
+  "name": "Siddharth Nair",
+  "age": 24,
+  "sex": "M",
+  "bed": "Observation 08",
+  "primaryDiagnosis": "Wolff-Parkinson-White (WPW) Pre-Excitation Syndrome",
+  "priorityTier": "Tier-2 (Urgent)",
+  "alertTitle": "VENTRICULAR PRE-EXCITATION (WPW DELTA WAVE) PATTERN",
+  "alertDesc": "Pathognomonic pre-excitation triad: short PR interval (96ms), prominent slurred QRS upstroke (Delta wave), and widened QRS (132ms). Patient symptomatic for palpitations; electrophysiology consult requested.",
+  "alertType": "warning",
+  "culpritVessel": "Accessory Pathway (Left Posterior Free-Wall Kent Bundle)",
+  "culpritConfidence": "94.6% Pre-Excitation Morphology Match",
+  "vitals": {
+    "hr": 84,
+    "hrStatus": "Sinus Rhythm w/ Pre-Excitation",
+    "bp": "122/78",
+    "spo2": 99,
+    "rr": 15,
+    "temp": "36.8",
+    "pr": 96,
+    "qrs": 132,
+    "qtc": 426,
+    "axis": "+72\u00b0",
+    "stDev": "+0.04 mV",
+    "stDevClass": "text-amber-400 font-bold"
+  },
+  "leadsElevated": [],
+  "leadsReciprocal": [],
+  "sampleBeats": [
+    {
+      "num": 15,
+      "type": "Pre-Excited Sinus (N/Delta)",
+      "conf": "95.2%",
+      "rr": "714 ms",
+      "jpt": "+0.04 mV",
+      "isAbnormal": false,
+      "classCode": "N",
+      "probabilities": {
+        "N": 0.952,
+        "S": 0.024,
+        "V": 0.018,
+        "F": 0.006
+      }
+    },
+    {
+      "num": 16,
+      "type": "Pre-Excited Sinus (N/Delta)",
+      "conf": "95.6%",
+      "rr": "710 ms",
+      "jpt": "+0.04 mV",
+      "isAbnormal": false,
+      "classCode": "N",
+      "probabilities": {
+        "N": 0.956,
+        "S": 0.022,
+        "V": 0.016,
+        "F": 0.006
+      }
+    },
+    {
+      "num": 17,
+      "type": "Orthodromic Ectopic (S)",
+      "conf": "92.8%",
+      "rr": "520 ms (PAC Trigger)",
+      "jpt": "+0.06 mV",
+      "isAbnormal": true,
+      "classCode": "S",
+      "probabilities": {
+        "N": 0.048,
+        "S": 0.928,
+        "V": 0.016,
+        "F": 0.008
+      }
+    },
+    {
+      "num": 18,
+      "type": "Pre-Excited Sinus (N/Delta)",
+      "conf": "94.8%",
+      "rr": "890 ms (Post-PAC)",
+      "jpt": "+0.04 mV",
+      "isAbnormal": false,
+      "classCode": "N",
+      "probabilities": {
+        "N": 0.948,
+        "S": 0.026,
+        "V": 0.019,
+        "F": 0.007
+      }
+    },
+    {
+      "num": 19,
+      "type": "Pre-Excited Sinus (N/Delta)",
+      "conf": "95.4%",
+      "rr": "715 ms",
+      "jpt": "+0.04 mV",
+      "isAbnormal": false,
+      "classCode": "N",
+      "probabilities": {
+        "N": 0.954,
+        "S": 0.023,
+        "V": 0.017,
+        "F": 0.006
+      }
+    }
+  ]
+}
