@@ -26,14 +26,25 @@ class AAMILabel(str, Enum):
 class ScreeningRequest(BaseModel):
     """
     Request body for `POST /screen`.
-    Send the raw ECG signal as a 1-D array of float samples.
+    Supports single-lead ('signal') or multi-lead dictionary ('signals') across 2–12 lead modes.
     """
 
-    signal: list[float] = Field(
-        ...,
-        min_length=360,
-        description="Raw ECG signal samples (minimum 360 samples = 1 s at 360 Hz)",
+    signal: list[float] | None = Field(
+        default=None,
+        description="Raw single-channel ECG signal samples (minimum 360 samples; defaults to Lead II)",
         examples=[[0.12, 0.15, 0.18, 0.22]],
+    )
+    signals: dict[str, list[float]] | None = Field(
+        default=None,
+        description="Multi-lead dictionary mapping lead name to samples (e.g. {'I': [...], 'II': [...], 'V1': [...]})",
+    )
+    lead_mode: str | None = Field(
+        default="auto",
+        description="Requested lead mode: '2-lead' | '3-lead' | '5-lead' | '8-lead' | '12-lead' | 'auto'",
+    )
+    leads: list[str] | None = Field(
+        default=None,
+        description="Optional list of lead names for multi-channel ordering",
     )
     sample_rate: int = Field(
         default=360,
@@ -53,19 +64,33 @@ class ScreeningRequest(BaseModel):
         description="Optional caller-supplied ID for idempotency; auto-generated if omitted",
     )
 
-    @field_validator("signal")
-    @classmethod
-    def signal_must_be_finite(cls, v: list[float]) -> list[float]:
+    @model_validator(mode="after")
+    def validate_signals_presence(self) -> "ScreeningRequest":
         import math
-        if any(not math.isfinite(x) for x in v):
-            raise ValueError("Signal contains NaN or Inf values — check your ADC/data pipeline")
-        return v
+        if self.signal is None and not self.signals:
+            raise ValueError("Either 'signal' (1D list) or 'signals' (multi-lead dict) must be provided")
+
+        if self.signal is not None:
+            if len(self.signal) < 360:
+                raise ValueError("Signal array must contain at least 360 samples")
+            if any(not math.isfinite(x) for x in self.signal):
+                raise ValueError("Signal contains NaN or Inf values — check your ADC/data pipeline")
+
+        if self.signals is not None:
+            for lead_name, vals in self.signals.items():
+                if len(vals) < 360:
+                    raise ValueError(f"Lead '{lead_name}' must have at least 360 samples")
+                if any(not math.isfinite(x) for x in vals):
+                    raise ValueError(f"Lead '{lead_name}' contains NaN or Inf values")
+
+        return self
 
     model_config = {
         "json_schema_extra": {
             "example": {
                 "signal": [0.0, 0.05, 0.1, 0.3, 0.6, 1.0, 0.8, 0.4, 0.1, 0.0],
                 "sample_rate": 360,
+                "lead_mode": "auto",
                 "patient_id": "patient-0042",
             }
         }
@@ -83,7 +108,7 @@ class BeatClassification(BaseModel):
         ...,
         ge=0.0,
         le=1.0,
-        description="Model confidence (max class probability)",
+        description="Model confidence (max class probability, lead-calibrated)",
     )
     probabilities: dict[str, float] = Field(
         ...,
@@ -113,6 +138,16 @@ class ScreeningResult(BaseModel):
     inference_duration_ms: float = Field(..., description="Model inference time (ms)")
     created_at: str = Field(..., description="ISO-8601 UTC timestamp")
 
+    # ── Variable 2–12 Lead Diagnostics ─────────────────────────────────────────
+    lead_mode: str = Field(default="2-lead", description="Active lead mode used for analysis")
+    leads_analyzed: list[str] = Field(default_factory=lambda: ["II"], description="Leads actively analyzed")
+    derived_leads: list[str] = Field(default_factory=list, description="Leads mathematically derived via Einthoven/Goldberger")
+    lead_count: int = Field(default=1, description="Number of active leads analyzed")
+    benchmark_accuracy: float = Field(default=0.885, description="Empirical benchmark accuracy for this lead mode")
+    clinical_tier: str = Field(default="Rural PHC & Handheld Triage", description="Clinical operational tier")
+    mi_localization: dict | None = Field(default=None, description="Territorial MI localization analysis (available at >= 8 leads)")
+    accuracy_curve: list[dict] = Field(default_factory=list, description="Reference accuracy vs lead count data")
+
     model_config = {
         "json_schema_extra": {
             "example": {
@@ -122,20 +157,26 @@ class ScreeningResult(BaseModel):
                 "sample_rate": 360,
                 "signal_length_samples": 3600,
                 "total_beats": 10,
+                "lead_mode": "12-lead",
+                "leads_analyzed": ["I", "II", "III", "aVR", "aVL", "aVF", "V1", "V2", "V3", "V4", "V5", "V6"],
+                "derived_leads": ["III", "aVR", "aVL", "aVF"],
+                "lead_count": 12,
+                "benchmark_accuracy": 0.991,
+                "clinical_tier": "Hospital Grade Comprehensive Diagnostic",
                 "beats": [
                     {
                         "beat_index": 0,
                         "r_peak_sample": 180,
                         "r_peak_time_s": 0.5,
                         "label": "N",
-                        "confidence": 0.97,
-                        "probabilities": {"N": 0.97, "S": 0.01, "V": 0.01, "F": 0.005, "Q": 0.005},
+                        "confidence": 0.99,
+                        "probabilities": {"N": 0.99, "S": 0.005, "V": 0.003, "F": 0.001, "Q": 0.001},
                     }
                 ],
                 "dominant_label": "N",
                 "label_summary": {"N": 9, "S": 1, "V": 0, "F": 0, "Q": 0},
-                "preprocessing_duration_ms": 12.4,
-                "inference_duration_ms": 3.1,
+                "preprocessing_duration_ms": 14.2,
+                "inference_duration_ms": 3.8,
                 "created_at": "2026-09-25T13:00:00Z",
             }
         }
@@ -147,18 +188,31 @@ class ScreeningResult(BaseModel):
 class SignalRecord(BaseModel):
     """A single signal entry within a batch request."""
 
-    signal: list[float] = Field(..., min_length=360)
+    signal: list[float] | None = Field(default=None, description="Single lead samples")
+    signals: dict[str, list[float]] | None = Field(default=None, description="Multi-lead dictionary")
+    lead_mode: str | None = Field(default="auto")
     sample_rate: int = Field(default=360, ge=100, le=10_000)
     patient_id: str | None = Field(default=None, max_length=64)
     signal_id: str | None = Field(default=None, max_length=64)
 
-    @field_validator("signal")
-    @classmethod
-    def signal_must_be_finite(cls, v: list[float]) -> list[float]:
+    @model_validator(mode="after")
+    def validate_record(self) -> "SignalRecord":
         import math
-        if any(not math.isfinite(x) for x in v):
-            raise ValueError("Signal contains NaN or Inf values")
-        return v
+        if self.signal is None and not self.signals:
+            raise ValueError("Either 'signal' or 'signals' must be provided in record")
+        if self.signal is not None:
+            if len(self.signal) < 360:
+                raise ValueError("Signal must have at least 360 samples")
+            if any(not math.isfinite(x) for x in self.signal):
+                raise ValueError("Signal contains NaN or Inf values")
+        if self.signals is not None:
+            for lead_name, vals in self.signals.items():
+                if len(vals) < 360:
+                    raise ValueError(f"Lead '{lead_name}' must have at least 360 samples")
+                if any(not math.isfinite(x) for x in vals):
+                    raise ValueError(f"Lead '{lead_name}' contains NaN or Inf values")
+        return self
+
 
 
 class BatchScreeningRequest(BaseModel):

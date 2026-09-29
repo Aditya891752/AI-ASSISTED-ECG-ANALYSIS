@@ -63,10 +63,14 @@ def _make_cache_key(signal_hash: str) -> str:
     return f"ecg:result:{signal_hash}"
 
 
-def hash_signal(signal: list[float]) -> str:
-    """Stable hash of a signal array for use as a cache key."""
-    raw = json.dumps(signal, separators=(",", ":")).encode()
+def hash_signal(signal: list[float] | dict[str, list[float]]) -> str:
+    """Stable hash of a signal array or multi-lead dictionary for use as a cache key."""
+    if isinstance(signal, dict):
+        raw = json.dumps({k: signal[k] for k in sorted(signal.keys())}, separators=(",", ":")).encode()
+    else:
+        raw = json.dumps(signal, separators=(",", ":")).encode()
     return hashlib.sha256(raw).hexdigest()[:32]
+
 
 
 async def get_cached_result(signal_hash: str) -> dict[str, Any] | None:
