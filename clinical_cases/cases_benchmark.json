@@ -1,0 +1,1106 @@
+{
+  "cf-8042": {
+    "id": "PT #CF-8042",
+    "name": "Harold Bennett",
+    "age": 58,
+    "sex": "M",
+    "bed": "ICU-Bed 04",
+    "primaryDiagnosis": "Acute Anteroseptal STEMI (LAD Occlusion)",
+    "priorityTier": "Tier-1 (Stat)",
+    "alertTitle": "ACUTE ANTEROSEPTAL STEMI PROTOCOL TRIGGERED",
+    "alertDesc": "Critical ST-segment elevation detected in precordial leads V1, V2, V3 (+0.28 mV at J-Point+60ms). Immediate cath lab activation and coronary revascularization protocol recommended.",
+    "alertType": "critical",
+    "culpritVessel": "LAD (Proximal Left Anterior Descending)",
+    "culpritConfidence": "95.8% Model Confidence",
+    "vitals": {
+      "hr": 82,
+      "hrStatus": "Sinus Tachycardia Tendency",
+      "bp": "142/92",
+      "spo2": 96,
+      "rr": 20,
+      "temp": "37.2",
+      "pr": 162,
+      "qrs": 96,
+      "qtc": 448,
+      "axis": "+48\u00b0",
+      "stDev": "+0.28 mV",
+      "stDevClass": "text-rose-400 font-bold"
+    },
+    "leadsElevated": [
+      "V1",
+      "V2",
+      "V3",
+      "V4"
+    ],
+    "leadsReciprocal": [
+      "II",
+      "III",
+      "aVF"
+    ],
+    "sampleBeats": [
+      {
+        "num": 12,
+        "type": "Normal Sinus (N)",
+        "conf": "99.4%",
+        "rr": "732 ms",
+        "jpt": "+0.26 mV",
+        "isAbnormal": false,
+        "classCode": "N",
+        "probabilities": {
+          "N": 0.994,
+          "S": 0.003,
+          "V": 0.002,
+          "F": 0.001
+        }
+      },
+      {
+        "num": 13,
+        "type": "Sinus with ST Elev (N)",
+        "conf": "98.9%",
+        "rr": "736 ms",
+        "jpt": "+0.28 mV",
+        "isAbnormal": false,
+        "classCode": "N",
+        "probabilities": {
+          "N": 0.989,
+          "S": 0.005,
+          "V": 0.004,
+          "F": 0.002
+        }
+      },
+      {
+        "num": 14,
+        "type": "Premature Ventricular Contraction (V)",
+        "conf": "96.4%",
+        "rr": "512 ms (Early)",
+        "jpt": "+0.32 mV",
+        "isAbnormal": true,
+        "classCode": "V",
+        "probabilities": {
+          "N": 0.012,
+          "S": 0.008,
+          "V": 0.964,
+          "F": 0.016
+        }
+      },
+      {
+        "num": 15,
+        "type": "Compensatory Normal (N)",
+        "conf": "99.1%",
+        "rr": "920 ms (Pause)",
+        "jpt": "+0.27 mV",
+        "isAbnormal": false,
+        "classCode": "N",
+        "probabilities": {
+          "N": 0.991,
+          "S": 0.004,
+          "V": 0.003,
+          "F": 0.002
+        }
+      },
+      {
+        "num": 16,
+        "type": "Premature Atrial Complex (S)",
+        "conf": "92.3%",
+        "rr": "618 ms",
+        "jpt": "+0.25 mV",
+        "isAbnormal": true,
+        "classCode": "S",
+        "probabilities": {
+          "N": 0.052,
+          "S": 0.923,
+          "V": 0.015,
+          "F": 0.01
+        }
+      }
+    ]
+  },
+  "mi-1092": {
+    "id": "PT #MI-1092",
+    "name": "Eleanor Vance",
+    "age": 64,
+    "sex": "F",
+    "bed": "CCU-Bed 02",
+    "primaryDiagnosis": "Acute Inferior Wall STEMI (RCA Occlusion)",
+    "priorityTier": "Tier-1 (Stat)",
+    "alertTitle": "INFERIOR MYOCARDIAL INFARCTION ALERT",
+    "alertDesc": "ST-segment elevation detected in limb leads II, III, aVF (+0.34 mV). Reciprocal ST depression marked in I, aVL. Right ventricular extension screening recommended.",
+    "alertType": "critical",
+    "culpritVessel": "RCA (Proximal Right Coronary Artery)",
+    "culpritConfidence": "97.2% Model Confidence",
+    "vitals": {
+      "hr": 58,
+      "hrStatus": "Sinus Bradycardia / Ischemic",
+      "bp": "110/68",
+      "spo2": 97,
+      "rr": 18,
+      "temp": "36.8",
+      "pr": 210,
+      "qrs": 92,
+      "qtc": 460,
+      "axis": "+105\u00b0 (Right Axis)",
+      "stDev": "+0.34 mV",
+      "stDevClass": "text-rose-400 font-bold"
+    },
+    "leadsElevated": [
+      "II",
+      "III",
+      "aVF"
+    ],
+    "leadsReciprocal": [
+      "I",
+      "aVL"
+    ],
+    "sampleBeats": [
+      {
+        "num": 8,
+        "type": "Normal Sinus (N)",
+        "conf": "99.1%",
+        "rr": "1034 ms",
+        "jpt": "+0.32 mV",
+        "isAbnormal": false,
+        "classCode": "N",
+        "probabilities": {
+          "N": 0.991,
+          "S": 0.005,
+          "V": 0.003,
+          "F": 0.001
+        }
+      },
+      {
+        "num": 9,
+        "type": "Sinus Bradycardia (N)",
+        "conf": "98.7%",
+        "rr": "1040 ms",
+        "jpt": "+0.36 mV",
+        "isAbnormal": false,
+        "classCode": "N",
+        "probabilities": {
+          "N": 0.987,
+          "S": 0.006,
+          "V": 0.004,
+          "F": 0.003
+        }
+      },
+      {
+        "num": 10,
+        "type": "Junctional Escape Beat (S)",
+        "conf": "91.8%",
+        "rr": "1120 ms (Escape)",
+        "jpt": "+0.32 mV",
+        "isAbnormal": true,
+        "classCode": "S",
+        "probabilities": {
+          "N": 0.061,
+          "S": 0.918,
+          "V": 0.012,
+          "F": 0.009
+        }
+      },
+      {
+        "num": 11,
+        "type": "Premature Ventricular Ectopic (V)",
+        "conf": "97.1%",
+        "rr": "620 ms",
+        "jpt": "+0.38 mV",
+        "isAbnormal": true,
+        "classCode": "V",
+        "probabilities": {
+          "N": 0.01,
+          "S": 0.008,
+          "V": 0.971,
+          "F": 0.011
+        }
+      },
+      {
+        "num": 12,
+        "type": "Post-Ectopic Recovery (N)",
+        "conf": "98.8%",
+        "rr": "1160 ms",
+        "jpt": "+0.35 mV",
+        "isAbnormal": false,
+        "classCode": "N",
+        "probabilities": {
+          "N": 0.988,
+          "S": 0.004,
+          "V": 0.005,
+          "F": 0.003
+        }
+      }
+    ]
+  },
+  "af-4410": {
+    "id": "PT #AF-4410",
+    "name": "Arthur Pendelton",
+    "age": 71,
+    "sex": "M",
+    "bed": "Step-Down 07",
+    "primaryDiagnosis": "Atrial Fibrillation with Rapid Ventricular Response (RVR)",
+    "priorityTier": "Tier-2 (Urgent)",
+    "alertTitle": "RAPID SUPRAVENTRICULAR ARRHYTHMIA WARNING",
+    "alertDesc": "Irregularly irregular ventricular response with absent discrete P-waves and high ventricular rate (>130 BPM). Patient symptomatic for palpitations; rate-control protocol active.",
+    "alertType": "warning",
+    "culpritVessel": "Supraventricular / Fibrillatory Conduction",
+    "culpritConfidence": "98.1% Rhythm Classification",
+    "vitals": {
+      "hr": 136,
+      "hrStatus": "Tachycardic RVR (>130)",
+      "bp": "148/96",
+      "spo2": 95,
+      "rr": 22,
+      "temp": "37.0",
+      "pr": 0,
+      "qrs": 88,
+      "qtc": 472,
+      "axis": "+24\u00b0",
+      "stDev": "-0.08 mV (Rate-dep)",
+      "stDevClass": "text-amber-400 font-bold"
+    },
+    "leadsElevated": [],
+    "leadsReciprocal": [],
+    "sampleBeats": [
+      {
+        "num": 21,
+        "type": "Atrial Fibrillation Beat (S)",
+        "conf": "96.8%",
+        "rr": "440 ms (Short)",
+        "jpt": "-0.06 mV",
+        "isAbnormal": true,
+        "classCode": "S",
+        "probabilities": {
+          "N": 0.021,
+          "S": 0.968,
+          "V": 0.008,
+          "F": 0.003
+        }
+      },
+      {
+        "num": 22,
+        "type": "Atrial Fibrillation Beat (S)",
+        "conf": "97.4%",
+        "rr": "410 ms (Short)",
+        "jpt": "-0.08 mV",
+        "isAbnormal": true,
+        "classCode": "S",
+        "probabilities": {
+          "N": 0.016,
+          "S": 0.974,
+          "V": 0.007,
+          "F": 0.003
+        }
+      },
+      {
+        "num": 23,
+        "type": "Aberrantly Conducted Beat (S)",
+        "conf": "93.2%",
+        "rr": "510 ms",
+        "jpt": "-0.05 mV",
+        "isAbnormal": true,
+        "classCode": "S",
+        "probabilities": {
+          "N": 0.045,
+          "S": 0.932,
+          "V": 0.018,
+          "F": 0.005
+        }
+      },
+      {
+        "num": 24,
+        "type": "Rapid Ventricular Beat (S)",
+        "conf": "98.1%",
+        "rr": "390 ms (Tachy)",
+        "jpt": "-0.09 mV",
+        "isAbnormal": true,
+        "classCode": "S",
+        "probabilities": {
+          "N": 0.01,
+          "S": 0.981,
+          "V": 0.006,
+          "F": 0.003
+        }
+      },
+      {
+        "num": 25,
+        "type": "Atrial Fibrillation Beat (S)",
+        "conf": "97.0%",
+        "rr": "460 ms",
+        "jpt": "-0.07 mV",
+        "isAbnormal": true,
+        "classCode": "S",
+        "probabilities": {
+          "N": 0.018,
+          "S": 0.97,
+          "V": 0.009,
+          "F": 0.003
+        }
+      }
+    ]
+  },
+  "ve-2104": {
+    "id": "PT #VE-2104",
+    "name": "Marcus Aurelius Diaz",
+    "age": 52,
+    "sex": "M",
+    "bed": "Telemetry 12",
+    "primaryDiagnosis": "Frequent Ventricular Trigeminy / PVC Burden 18%",
+    "priorityTier": "Tier-2 (Urgent)",
+    "alertTitle": "FREQUENT VENTRICULAR ECTOPY SURVEILLANCE",
+    "alertDesc": "Recurring ventricular trigeminy pattern detected (two sinus beats followed by wide-complex PVC). Total 24-hr ectopic burden 18.2%. Anti-arrhythmic response being monitored.",
+    "alertType": "warning",
+    "culpritVessel": "Right Ventricular Outflow Tract (RVOT Ectopic Focus)",
+    "culpritConfidence": "96.7% Morphology Match",
+    "vitals": {
+      "hr": 76,
+      "hrStatus": "Trigeminy Pattern Active",
+      "bp": "128/82",
+      "spo2": 98,
+      "rr": 17,
+      "temp": "36.9",
+      "pr": 154,
+      "qrs": 142,
+      "qtc": 432,
+      "axis": "-42\u00b0 (LAD)",
+      "stDev": "+0.14 mV (Discordant)",
+      "stDevClass": "text-amber-400 font-bold"
+    },
+    "leadsElevated": [],
+    "leadsReciprocal": [],
+    "sampleBeats": [
+      {
+        "num": 1,
+        "type": "Sinus Rhythm Beat (N)",
+        "conf": "99.5%",
+        "rr": "790 ms",
+        "jpt": "0.00 mV",
+        "isAbnormal": false,
+        "classCode": "N",
+        "probabilities": {
+          "N": 0.995,
+          "S": 0.003,
+          "V": 0.001,
+          "F": 0.001
+        }
+      },
+      {
+        "num": 2,
+        "type": "Sinus Rhythm Beat (N)",
+        "conf": "99.3%",
+        "rr": "785 ms",
+        "jpt": "0.00 mV",
+        "isAbnormal": false,
+        "classCode": "N",
+        "probabilities": {
+          "N": 0.993,
+          "S": 0.004,
+          "V": 0.002,
+          "F": 0.001
+        }
+      },
+      {
+        "num": 3,
+        "type": "Ventricular Ectopic Complex (V)",
+        "conf": "98.2%",
+        "rr": "520 ms (Coupled)",
+        "jpt": "+0.28 mV",
+        "isAbnormal": true,
+        "classCode": "V",
+        "probabilities": {
+          "N": 0.008,
+          "S": 0.006,
+          "V": 0.982,
+          "F": 0.004
+        }
+      },
+      {
+        "num": 4,
+        "type": "Sinus Rhythm Beat (N)",
+        "conf": "99.4%",
+        "rr": "1050 ms (Compensatory)",
+        "jpt": "0.00 mV",
+        "isAbnormal": false,
+        "classCode": "N",
+        "probabilities": {
+          "N": 0.994,
+          "S": 0.003,
+          "V": 0.002,
+          "F": 0.001
+        }
+      },
+      {
+        "num": 5,
+        "type": "Sinus Rhythm Beat (N)",
+        "conf": "99.2%",
+        "rr": "792 ms",
+        "jpt": "0.00 mV",
+        "isAbnormal": false,
+        "classCode": "N",
+        "probabilities": {
+          "N": 0.992,
+          "S": 0.004,
+          "V": 0.002,
+          "F": 0.002
+        }
+      }
+    ]
+  },
+  "ns-0018": {
+    "id": "PT #NS-0018",
+    "name": "Clara Oswald",
+    "age": 29,
+    "sex": "F",
+    "bed": "Outpatient Bay 03",
+    "primaryDiagnosis": "Normal Sinus Rhythm (Physiological Baseline)",
+    "priorityTier": "Tier-3 (Routine)",
+    "alertTitle": "NORMAL PHYSIOLOGICAL RHYTHM VERIFIED",
+    "alertDesc": "Normal sinus P-wave morphology preceding every QRS complex. Normal PR interval (148 ms), narrow QRS duration (84 ms), and normal corrected QT interval (404 ms). No ST elevation or depression detected.",
+    "alertType": "normal",
+    "culpritVessel": "Normal SA Nodal Conduction",
+    "culpritConfidence": "99.8% Rhythm Normalcy",
+    "vitals": {
+      "hr": 72,
+      "hrStatus": "Normal Resting Rate",
+      "bp": "118/74",
+      "spo2": 99,
+      "rr": 14,
+      "temp": "36.6",
+      "pr": 148,
+      "qrs": 84,
+      "qtc": 404,
+      "axis": "+58\u00b0",
+      "stDev": "0.00 mV",
+      "stDevClass": "text-emerald-400 font-bold"
+    },
+    "leadsElevated": [],
+    "leadsReciprocal": [],
+    "sampleBeats": [
+      {
+        "num": 1,
+        "type": "Normal Sinus (N)",
+        "conf": "99.8%",
+        "rr": "833 ms",
+        "jpt": "0.00 mV",
+        "isAbnormal": false,
+        "classCode": "N",
+        "probabilities": {
+          "N": 0.998,
+          "S": 0.001,
+          "V": 0.001,
+          "F": 0.0
+        }
+      },
+      {
+        "num": 2,
+        "type": "Normal Sinus (N)",
+        "conf": "99.9%",
+        "rr": "830 ms",
+        "jpt": "0.00 mV",
+        "isAbnormal": false,
+        "classCode": "N",
+        "probabilities": {
+          "N": 0.999,
+          "S": 0.001,
+          "V": 0.0,
+          "F": 0.0
+        }
+      },
+      {
+        "num": 3,
+        "type": "Normal Sinus (N)",
+        "conf": "99.7%",
+        "rr": "836 ms",
+        "jpt": "0.00 mV",
+        "isAbnormal": false,
+        "classCode": "N",
+        "probabilities": {
+          "N": 0.997,
+          "S": 0.002,
+          "V": 0.001,
+          "F": 0.0
+        }
+      },
+      {
+        "num": 4,
+        "type": "Normal Sinus (N)",
+        "conf": "99.8%",
+        "rr": "832 ms",
+        "jpt": "0.00 mV",
+        "isAbnormal": false,
+        "classCode": "N",
+        "probabilities": {
+          "N": 0.998,
+          "S": 0.001,
+          "V": 0.001,
+          "F": 0.0
+        }
+      },
+      {
+        "num": 5,
+        "type": "Normal Sinus (N)",
+        "conf": "99.8%",
+        "rr": "834 ms",
+        "jpt": "0.00 mV",
+        "isAbnormal": false,
+        "classCode": "N",
+        "probabilities": {
+          "N": 0.998,
+          "S": 0.001,
+          "V": 0.001,
+          "F": 0.0
+        }
+      }
+    ]
+  },
+  "lc-3389": {
+    "id": "PT #LC-3389",
+    "name": "Gregory Vance-Hayes",
+    "age": 61,
+    "sex": "M",
+    "bed": "CCU-Bed 05",
+    "primaryDiagnosis": "Acute Extensive Lateral STEMI (LCx Occlusion)",
+    "priorityTier": "Tier-1 (Stat)",
+    "alertTitle": "ACUTE EXTENSIVE LATERAL STEMI PROTOCOL TRIGGERED",
+    "alertDesc": "Pronounced ST elevation in high lateral leads I, aVL and lateral precordial leads V5, V6 (+0.31 mV). Reciprocal ST depression in inferior leads III and aVF. Immediate primary PCI activation indicated.",
+    "alertType": "critical",
+    "culpritVessel": "LCx (Left Circumflex Artery - Obtuse Marginal OM1)",
+    "culpritConfidence": "97.4% Model Confidence",
+    "vitals": {
+      "hr": 88,
+      "hrStatus": "Sinus Rhythm with Ectopic Risk",
+      "bp": "136/88",
+      "spo2": 95,
+      "rr": 21,
+      "temp": "37.1",
+      "pr": 158,
+      "qrs": 102,
+      "qtc": 462,
+      "axis": "-18\u00b0 (Horizontal/Left)",
+      "stDev": "+0.31 mV",
+      "stDevClass": "text-rose-400 font-bold"
+    },
+    "leadsElevated": [
+      "I",
+      "aVL",
+      "V5",
+      "V6"
+    ],
+    "leadsReciprocal": [
+      "III",
+      "aVF"
+    ],
+    "sampleBeats": [
+      {
+        "num": 8,
+        "type": "Normal Sinus (N)",
+        "conf": "99.2%",
+        "rr": "682 ms",
+        "jpt": "+0.29 mV",
+        "isAbnormal": false,
+        "classCode": "N",
+        "probabilities": {
+          "N": 0.992,
+          "S": 0.005,
+          "V": 0.002,
+          "F": 0.001
+        }
+      },
+      {
+        "num": 9,
+        "type": "Sinus with Lateral Elev (N)",
+        "conf": "98.7%",
+        "rr": "680 ms",
+        "jpt": "+0.31 mV",
+        "isAbnormal": false,
+        "classCode": "N",
+        "probabilities": {
+          "N": 0.987,
+          "S": 0.006,
+          "V": 0.005,
+          "F": 0.002
+        }
+      },
+      {
+        "num": 10,
+        "type": "Premature Ventricular Ectopic (V)",
+        "conf": "96.8%",
+        "rr": "490 ms (Coupled)",
+        "jpt": "+0.34 mV",
+        "isAbnormal": true,
+        "classCode": "V",
+        "probabilities": {
+          "N": 0.015,
+          "S": 0.007,
+          "V": 0.968,
+          "F": 0.01
+        }
+      },
+      {
+        "num": 11,
+        "type": "Post-Ectopic Recovery (N)",
+        "conf": "99.0%",
+        "rr": "870 ms (Compensatory)",
+        "jpt": "+0.30 mV",
+        "isAbnormal": false,
+        "classCode": "N",
+        "probabilities": {
+          "N": 0.99,
+          "S": 0.005,
+          "V": 0.003,
+          "F": 0.002
+        }
+      },
+      {
+        "num": 12,
+        "type": "Sinus with ST Elev (N)",
+        "conf": "98.9%",
+        "rr": "684 ms",
+        "jpt": "+0.31 mV",
+        "isAbnormal": false,
+        "classCode": "N",
+        "probabilities": {
+          "N": 0.989,
+          "S": 0.006,
+          "V": 0.003,
+          "F": 0.002
+        }
+      }
+    ]
+  },
+  "vt-9912": {
+    "id": "PT #VT-9912",
+    "name": "Dmitri Rostov",
+    "age": 67,
+    "sex": "M",
+    "bed": "Resus Bay 01",
+    "primaryDiagnosis": "Sustained Monomorphic Ventricular Tachycardia (MVT)",
+    "priorityTier": "Tier-1 (Stat)",
+    "alertTitle": "CRITICAL SUSTAINED VENTRICULAR TACHYCARDIA PROTOCOL",
+    "alertDesc": "Wide-complex regular tachycardia at 178 BPM with QRS duration 168ms, concordant precordial vector, and AV dissociation. Severe hemodynamic deterioration risk; prepare synchronized cardioversion.",
+    "alertType": "critical",
+    "culpritVessel": "Ventricular Re-entry Circuit (Septal/LV Apex Focus)",
+    "culpritConfidence": "99.4% Wide-Complex VT Classifier",
+    "vitals": {
+      "hr": 178,
+      "hrStatus": "Extreme Ventricular Tachycardia (>160)",
+      "bp": "88/54",
+      "spo2": 91,
+      "rr": 28,
+      "temp": "36.7",
+      "pr": 0,
+      "qrs": 168,
+      "qtc": 520,
+      "axis": "-120\u00b0 (Extreme Northwest Axis)",
+      "stDev": "-0.18 mV",
+      "stDevClass": "text-rose-400 font-bold"
+    },
+    "leadsElevated": [
+      "V1",
+      "V2",
+      "V3",
+      "V4",
+      "V5",
+      "V6"
+    ],
+    "leadsReciprocal": [],
+    "sampleBeats": [
+      {
+        "num": 41,
+        "type": "Ventricular Tachycardia Beat (V)",
+        "conf": "99.5%",
+        "rr": "337 ms (Tachy)",
+        "jpt": "-0.18 mV",
+        "isAbnormal": true,
+        "classCode": "V",
+        "probabilities": {
+          "N": 0.002,
+          "S": 0.002,
+          "V": 0.995,
+          "F": 0.001
+        }
+      },
+      {
+        "num": 42,
+        "type": "Ventricular Tachycardia Beat (V)",
+        "conf": "99.6%",
+        "rr": "338 ms (Tachy)",
+        "jpt": "-0.18 mV",
+        "isAbnormal": true,
+        "classCode": "V",
+        "probabilities": {
+          "N": 0.001,
+          "S": 0.002,
+          "V": 0.996,
+          "F": 0.001
+        }
+      },
+      {
+        "num": 43,
+        "type": "Ventricular Tachycardia Beat (V)",
+        "conf": "99.4%",
+        "rr": "336 ms (Tachy)",
+        "jpt": "-0.17 mV",
+        "isAbnormal": true,
+        "classCode": "V",
+        "probabilities": {
+          "N": 0.002,
+          "S": 0.003,
+          "V": 0.994,
+          "F": 0.001
+        }
+      },
+      {
+        "num": 44,
+        "type": "Ventricular Tachycardia Beat (V)",
+        "conf": "99.7%",
+        "rr": "337 ms (Tachy)",
+        "jpt": "-0.18 mV",
+        "isAbnormal": true,
+        "classCode": "V",
+        "probabilities": {
+          "N": 0.001,
+          "S": 0.001,
+          "V": 0.997,
+          "F": 0.001
+        }
+      },
+      {
+        "num": 45,
+        "type": "Ventricular Tachycardia Beat (V)",
+        "conf": "99.5%",
+        "rr": "337 ms (Tachy)",
+        "jpt": "-0.18 mV",
+        "isAbnormal": true,
+        "classCode": "V",
+        "probabilities": {
+          "N": 0.002,
+          "S": 0.002,
+          "V": 0.995,
+          "F": 0.001
+        }
+      }
+    ]
+  },
+  "hb-5511": {
+    "id": "PT #HB-5511",
+    "name": "Margaret Chen-Wu",
+    "age": 76,
+    "sex": "F",
+    "bed": "Step-Down 02",
+    "primaryDiagnosis": "Complete Third-Degree Atrioventricular (AV) Block",
+    "priorityTier": "Tier-1 (Stat)",
+    "alertTitle": "COMPLETE THIRD-DEGREE HEART BLOCK WITH ESCAPE RHYTHM",
+    "alertDesc": "Complete atrioventricular dissociation between regular P waves (atrial rate 84 BPM) and narrow junctional escape complexes (ventricular rate 34 BPM). Profound bradycardia; transcutaneous pacing standby.",
+    "alertType": "critical",
+    "culpritVessel": "AV Nodal Infranodal Conduction / His-Purkinje System",
+    "culpritConfidence": "98.7% AV Dissociation Detector",
+    "vitals": {
+      "hr": 34,
+      "hrStatus": "Profound Symptomatic Bradycardia (<40)",
+      "bp": "94/58",
+      "spo2": 94,
+      "rr": 16,
+      "temp": "36.5",
+      "pr": 0,
+      "qrs": 114,
+      "qtc": 478,
+      "axis": "+15\u00b0",
+      "stDev": "0.00 mV",
+      "stDevClass": "text-rose-400 font-bold"
+    },
+    "leadsElevated": [],
+    "leadsReciprocal": [],
+    "sampleBeats": [
+      {
+        "num": 1,
+        "type": "Junctional Escape Beat (S)",
+        "conf": "97.4%",
+        "rr": "1765 ms (Severe Brady)",
+        "jpt": "0.00 mV",
+        "isAbnormal": true,
+        "classCode": "S",
+        "probabilities": {
+          "N": 0.021,
+          "S": 0.974,
+          "V": 0.003,
+          "F": 0.002
+        }
+      },
+      {
+        "num": 2,
+        "type": "Junctional Escape Beat (S)",
+        "conf": "97.8%",
+        "rr": "1760 ms (Severe Brady)",
+        "jpt": "0.00 mV",
+        "isAbnormal": true,
+        "classCode": "S",
+        "probabilities": {
+          "N": 0.018,
+          "S": 0.978,
+          "V": 0.002,
+          "F": 0.002
+        }
+      },
+      {
+        "num": 3,
+        "type": "Junctional Escape Beat (S)",
+        "conf": "98.1%",
+        "rr": "1765 ms (Severe Brady)",
+        "jpt": "0.00 mV",
+        "isAbnormal": true,
+        "classCode": "S",
+        "probabilities": {
+          "N": 0.015,
+          "S": 0.981,
+          "V": 0.002,
+          "F": 0.002
+        }
+      },
+      {
+        "num": 4,
+        "type": "Ventricular Escape Ectopic (V)",
+        "conf": "94.2%",
+        "rr": "1680 ms",
+        "jpt": "+0.08 mV",
+        "isAbnormal": true,
+        "classCode": "V",
+        "probabilities": {
+          "N": 0.025,
+          "S": 0.021,
+          "V": 0.942,
+          "F": 0.012
+        }
+      },
+      {
+        "num": 5,
+        "type": "Junctional Escape Beat (S)",
+        "conf": "97.6%",
+        "rr": "1770 ms (Severe Brady)",
+        "jpt": "0.00 mV",
+        "isAbnormal": true,
+        "classCode": "S",
+        "probabilities": {
+          "N": 0.019,
+          "S": 0.976,
+          "V": 0.003,
+          "F": 0.002
+        }
+      }
+    ]
+  },
+  "wp-6720": {
+    "id": "PT #WP-6720",
+    "name": "Siddharth Nair",
+    "age": 24,
+    "sex": "M",
+    "bed": "Observation 08",
+    "primaryDiagnosis": "Wolff-Parkinson-White (WPW) Pre-Excitation Syndrome",
+    "priorityTier": "Tier-2 (Urgent)",
+    "alertTitle": "VENTRICULAR PRE-EXCITATION (WPW DELTA WAVE) PATTERN",
+    "alertDesc": "Pathognomonic pre-excitation triad: short PR interval (96ms), prominent slurred QRS upstroke (Delta wave), and widened QRS (132ms). Patient symptomatic for palpitations; electrophysiology consult requested.",
+    "alertType": "warning",
+    "culpritVessel": "Accessory Pathway (Left Posterior Free-Wall Kent Bundle)",
+    "culpritConfidence": "94.6% Pre-Excitation Morphology Match",
+    "vitals": {
+      "hr": 84,
+      "hrStatus": "Sinus Rhythm w/ Pre-Excitation",
+      "bp": "122/78",
+      "spo2": 99,
+      "rr": 15,
+      "temp": "36.8",
+      "pr": 96,
+      "qrs": 132,
+      "qtc": 426,
+      "axis": "+72\u00b0",
+      "stDev": "+0.04 mV",
+      "stDevClass": "text-amber-400 font-bold"
+    },
+    "leadsElevated": [],
+    "leadsReciprocal": [],
+    "sampleBeats": [
+      {
+        "num": 15,
+        "type": "Pre-Excited Sinus (N/Delta)",
+        "conf": "95.2%",
+        "rr": "714 ms",
+        "jpt": "+0.04 mV",
+        "isAbnormal": false,
+        "classCode": "N",
+        "probabilities": {
+          "N": 0.952,
+          "S": 0.024,
+          "V": 0.018,
+          "F": 0.006
+        }
+      },
+      {
+        "num": 16,
+        "type": "Pre-Excited Sinus (N/Delta)",
+        "conf": "95.6%",
+        "rr": "710 ms",
+        "jpt": "+0.04 mV",
+        "isAbnormal": false,
+        "classCode": "N",
+        "probabilities": {
+          "N": 0.956,
+          "S": 0.022,
+          "V": 0.016,
+          "F": 0.006
+        }
+      },
+      {
+        "num": 17,
+        "type": "Orthodromic Ectopic (S)",
+        "conf": "92.8%",
+        "rr": "520 ms (PAC Trigger)",
+        "jpt": "+0.06 mV",
+        "isAbnormal": true,
+        "classCode": "S",
+        "probabilities": {
+          "N": 0.048,
+          "S": 0.928,
+          "V": 0.016,
+          "F": 0.008
+        }
+      },
+      {
+        "num": 18,
+        "type": "Pre-Excited Sinus (N/Delta)",
+        "conf": "94.8%",
+        "rr": "890 ms (Post-PAC)",
+        "jpt": "+0.04 mV",
+        "isAbnormal": false,
+        "classCode": "N",
+        "probabilities": {
+          "N": 0.948,
+          "S": 0.026,
+          "V": 0.019,
+          "F": 0.007
+        }
+      },
+      {
+        "num": 19,
+        "type": "Pre-Excited Sinus (N/Delta)",
+        "conf": "95.4%",
+        "rr": "715 ms",
+        "jpt": "+0.04 mV",
+        "isAbnormal": false,
+        "classCode": "N",
+        "probabilities": {
+          "N": 0.954,
+          "S": 0.023,
+          "V": 0.017,
+          "F": 0.006
+        }
+      }
+    ]
+  },
+  "br-1804": {
+    "id": "PT #BR-1804",
+    "name": "Lucian Moreau",
+    "age": 41,
+    "sex": "M",
+    "bed": "Cardiac Care 09",
+    "primaryDiagnosis": "Brugada Syndrome (Type-1 Coved Precordial ST Elevation)",
+    "priorityTier": "Tier-1 (Stat)",
+    "alertTitle": "TYPE-1 BRUGADA PATTERN (COVED ST ELEVATION \u22652.5mm)",
+    "alertDesc": "Classic coved-type ST segment elevation (+0.26 mV) followed by negative symmetric T-wave in right precordial leads V1 and V2. Severe sudden cardiac death risk; continuous telemetry and ICD evaluation indicated.",
+    "alertType": "critical",
+    "culpritVessel": "SCN5A Cardiac Sodium Channelopathy (Right Ventricular Outflow)",
+    "culpritConfidence": "96.2% Channelopathy Morphology Match",
+    "vitals": {
+      "hr": 68,
+      "hrStatus": "Resting Normal Baseline",
+      "bp": "126/80",
+      "spo2": 98,
+      "rr": 16,
+      "temp": "36.9",
+      "pr": 180,
+      "qrs": 118,
+      "qtc": 442,
+      "axis": "-10\u00b0",
+      "stDev": "+0.26 mV (Coved)",
+      "stDevClass": "text-rose-400 font-bold"
+    },
+    "leadsElevated": [
+      "V1",
+      "V2"
+    ],
+    "leadsReciprocal": [],
+    "sampleBeats": [
+      {
+        "num": 31,
+        "type": "Brugada Coved Beat (N/Brug)",
+        "conf": "96.4%",
+        "rr": "882 ms",
+        "jpt": "+0.26 mV",
+        "isAbnormal": false,
+        "classCode": "N",
+        "probabilities": {
+          "N": 0.964,
+          "S": 0.018,
+          "V": 0.012,
+          "F": 0.006
+        }
+      },
+      {
+        "num": 32,
+        "type": "Brugada Coved Beat (N/Brug)",
+        "conf": "96.8%",
+        "rr": "880 ms",
+        "jpt": "+0.26 mV",
+        "isAbnormal": false,
+        "classCode": "N",
+        "probabilities": {
+          "N": 0.968,
+          "S": 0.016,
+          "V": 0.01,
+          "F": 0.006
+        }
+      },
+      {
+        "num": 33,
+        "type": "Ventricular Ectopic Warning (V)",
+        "conf": "97.2%",
+        "rr": "510 ms (Short Coupled)",
+        "jpt": "+0.32 mV",
+        "isAbnormal": true,
+        "classCode": "V",
+        "probabilities": {
+          "N": 0.012,
+          "S": 0.008,
+          "V": 0.972,
+          "F": 0.008
+        }
+      },
+      {
+        "num": 34,
+        "type": "Compensatory Pause Beat (N)",
+        "conf": "96.1%",
+        "rr": "1210 ms (Pause)",
+        "jpt": "+0.25 mV",
+        "isAbnormal": false,
+        "classCode": "N",
+        "probabilities": {
+          "N": 0.961,
+          "S": 0.021,
+          "V": 0.012,
+          "F": 0.006
+        }
+      },
+      {
+        "num": 35,
+        "type": "Brugada Coved Beat (N/Brug)",
+        "conf": "96.5%",
+        "rr": "884 ms",
+        "jpt": "+0.26 mV",
+        "isAbnormal": false,
+        "classCode": "N",
+        "probabilities": {
+          "N": 0.965,
+          "S": 0.017,
+          "V": 0.012,
+          "F": 0.006
+        }
+      }
+    ]
+  }
+}

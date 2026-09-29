@@ -1,0 +1,115 @@
+{
+  "id": "PT #LC-3389",
+  "name": "Gregory Vance-Hayes",
+  "age": 61,
+  "sex": "M",
+  "bed": "CCU-Bed 05",
+  "primaryDiagnosis": "Acute Extensive Lateral STEMI (LCx Occlusion)",
+  "priorityTier": "Tier-1 (Stat)",
+  "alertTitle": "ACUTE EXTENSIVE LATERAL STEMI PROTOCOL TRIGGERED",
+  "alertDesc": "Pronounced ST elevation in high lateral leads I, aVL and lateral precordial leads V5, V6 (+0.31 mV). Reciprocal ST depression in inferior leads III and aVF. Immediate primary PCI activation indicated.",
+  "alertType": "critical",
+  "culpritVessel": "LCx (Left Circumflex Artery - Obtuse Marginal OM1)",
+  "culpritConfidence": "97.4% Model Confidence",
+  "vitals": {
+    "hr": 88,
+    "hrStatus": "Sinus Rhythm with Ectopic Risk",
+    "bp": "136/88",
+    "spo2": 95,
+    "rr": 21,
+    "temp": "37.1",
+    "pr": 158,
+    "qrs": 102,
+    "qtc": 462,
+    "axis": "-18\u00b0 (Horizontal/Left)",
+    "stDev": "+0.31 mV",
+    "stDevClass": "text-rose-400 font-bold"
+  },
+  "leadsElevated": [
+    "I",
+    "aVL",
+    "V5",
+    "V6"
+  ],
+  "leadsReciprocal": [
+    "III",
+    "aVF"
+  ],
+  "sampleBeats": [
+    {
+      "num": 8,
+      "type": "Normal Sinus (N)",
+      "conf": "99.2%",
+      "rr": "682 ms",
+      "jpt": "+0.29 mV",
+      "isAbnormal": false,
+      "classCode": "N",
+      "probabilities": {
+        "N": 0.992,
+        "S": 0.005,
+        "V": 0.002,
+        "F": 0.001
+      }
+    },
+    {
+      "num": 9,
+      "type": "Sinus with Lateral Elev (N)",
+      "conf": "98.7%",
+      "rr": "680 ms",
+      "jpt": "+0.31 mV",
+      "isAbnormal": false,
+      "classCode": "N",
+      "probabilities": {
+        "N": 0.987,
+        "S": 0.006,
+        "V": 0.005,
+        "F": 0.002
+      }
+    },
+    {
+      "num": 10,
+      "type": "Premature Ventricular Ectopic (V)",
+      "conf": "96.8%",
+      "rr": "490 ms (Coupled)",
+      "jpt": "+0.34 mV",
+      "isAbnormal": true,
+      "classCode": "V",
+      "probabilities": {
+        "N": 0.015,
+        "S": 0.007,
+        "V": 0.968,
+        "F": 0.01
+      }
+    },
+    {
+      "num": 11,
+      "type": "Post-Ectopic Recovery (N)",
+      "conf": "99.0%",
+      "rr": "870 ms (Compensatory)",
+      "jpt": "+0.30 mV",
+      "isAbnormal": false,
+      "classCode": "N",
+      "probabilities": {
+        "N": 0.99,
+        "S": 0.005,
+        "V": 0.003,
+        "F": 0.002
+      }
+    },
+    {
+      "num": 12,
+      "type": "Sinus with ST Elev (N)",
+      "conf": "98.9%",
+      "rr": "684 ms",
+      "jpt": "+0.31 mV",
+      "isAbnormal": false,
+      "classCode": "N",
+      "probabilities": {
+        "N": 0.989,
+        "S": 0.006,
+        "V": 0.003,
+        "F": 0.002
+      }
+    }
+  ]
+}

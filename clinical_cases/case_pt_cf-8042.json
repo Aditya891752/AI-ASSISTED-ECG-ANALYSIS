@@ -1,0 +1,116 @@
+{
+  "id": "PT #CF-8042",
+  "name": "Harold Bennett",
+  "age": 58,
+  "sex": "M",
+  "bed": "ICU-Bed 04",
+  "primaryDiagnosis": "Acute Anteroseptal STEMI (LAD Occlusion)",
+  "priorityTier": "Tier-1 (Stat)",
+  "alertTitle": "ACUTE ANTEROSEPTAL STEMI PROTOCOL TRIGGERED",
+  "alertDesc": "Critical ST-segment elevation detected in precordial leads V1, V2, V3 (+0.28 mV at J-Point+60ms). Immediate cath lab activation and coronary revascularization protocol recommended.",
+  "alertType": "critical",
+  "culpritVessel": "LAD (Proximal Left Anterior Descending)",
+  "culpritConfidence": "95.8% Model Confidence",
+  "vitals": {
+    "hr": 82,
+    "hrStatus": "Sinus Tachycardia Tendency",
+    "bp": "142/92",
+    "spo2": 96,
+    "rr": 20,
+    "temp": "37.2",
+    "pr": 162,
+    "qrs": 96,
+    "qtc": 448,
+    "axis": "+48\u00b0",
+    "stDev": "+0.28 mV",
+    "stDevClass": "text-rose-400 font-bold"
+  },
+  "leadsElevated": [
+    "V1",
+    "V2",
+    "V3",
+    "V4"
+  ],
+  "leadsReciprocal": [
+    "II",
+    "III",
+    "aVF"
+  ],
+  "sampleBeats": [
+    {
+      "num": 12,
+      "type": "Normal Sinus (N)",
+      "conf": "99.4%",
+      "rr": "732 ms",
+      "jpt": "+0.26 mV",
+      "isAbnormal": false,
+      "classCode": "N",
+      "probabilities": {
+        "N": 0.994,
+        "S": 0.003,
+        "V": 0.002,
+        "F": 0.001
+      }
+    },
+    {
+      "num": 13,
+      "type": "Sinus with ST Elev (N)",
+      "conf": "98.9%",
+      "rr": "736 ms",
+      "jpt": "+0.28 mV",
+      "isAbnormal": false,
+      "classCode": "N",
+      "probabilities": {
+        "N": 0.989,
+        "S": 0.005,
+        "V": 0.004,
+        "F": 0.002
+      }
+    },
+    {
+      "num": 14,
+      "type": "Premature Ventricular Contraction (V)",
+      "conf": "96.4%",
+      "rr": "512 ms (Early)",
+      "jpt": "+0.32 mV",
+      "isAbnormal": true,
+      "classCode": "V",
+      "probabilities": {
+        "N": 0.012,
+        "S": 0.008,
+        "V": 0.964,
+        "F": 0.016
+      }
+    },
+    {
+      "num": 15,
+      "type": "Compensatory Normal (N)",
+      "conf": "99.1%",
+      "rr": "920 ms (Pause)",
+      "jpt": "+0.27 mV",
+      "isAbnormal": false,
+      "classCode": "N",
+      "probabilities": {
+        "N": 0.991,
+        "S": 0.004,
+        "V": 0.003,
+        "F": 0.002
+      }
+    },
+    {
+      "num": 16,
+      "type": "Premature Atrial Complex (S)",
+      "conf": "92.3%",
+      "rr": "618 ms",
+      "jpt": "+0.25 mV",
+      "isAbnormal": true,
+      "classCode": "S",
+      "probabilities": {
+        "N": 0.052,
+        "S": 0.923,
+        "V": 0.015,
+        "F": 0.01
+      }
+    }
+  ]
+}

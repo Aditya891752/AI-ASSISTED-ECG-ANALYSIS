@@ -1,0 +1,107 @@
+{
+  "id": "PT #AF-4410",
+  "name": "Arthur Pendelton",
+  "age": 71,
+  "sex": "M",
+  "bed": "Step-Down 07",
+  "primaryDiagnosis": "Atrial Fibrillation with Rapid Ventricular Response (RVR)",
+  "priorityTier": "Tier-2 (Urgent)",
+  "alertTitle": "RAPID SUPRAVENTRICULAR ARRHYTHMIA WARNING",
+  "alertDesc": "Irregularly irregular ventricular response with absent discrete P-waves and high ventricular rate (>130 BPM). Patient symptomatic for palpitations; rate-control protocol active.",
+  "alertType": "warning",
+  "culpritVessel": "Supraventricular / Fibrillatory Conduction",
+  "culpritConfidence": "98.1% Rhythm Classification",
+  "vitals": {
+    "hr": 136,
+    "hrStatus": "Tachycardic RVR (>130)",
+    "bp": "148/96",
+    "spo2": 95,
+    "rr": 22,
+    "temp": "37.0",
+    "pr": 0,
+    "qrs": 88,
+    "qtc": 472,
+    "axis": "+24\u00b0",
+    "stDev": "-0.08 mV (Rate-dep)",
+    "stDevClass": "text-amber-400 font-bold"
+  },
+  "leadsElevated": [],
+  "leadsReciprocal": [],
+  "sampleBeats": [
+    {
+      "num": 21,
+      "type": "Atrial Fibrillation Beat (S)",
+      "conf": "96.8%",
+      "rr": "440 ms (Short)",
+      "jpt": "-0.06 mV",
+      "isAbnormal": true,
+      "classCode": "S",
+      "probabilities": {
+        "N": 0.021,
+        "S": 0.968,
+        "V": 0.008,
+        "F": 0.003
+      }
+    },
+    {
+      "num": 22,
+      "type": "Atrial Fibrillation Beat (S)",
+      "conf": "97.4%",
+      "rr": "410 ms (Short)",
+      "jpt": "-0.08 mV",
+      "isAbnormal": true,
+      "classCode": "S",
+      "probabilities": {
+        "N": 0.016,
+        "S": 0.974,
+        "V": 0.007,
+        "F": 0.003
+      }
+    },
+    {
+      "num": 23,
+      "type": "Aberrantly Conducted Beat (S)",
+      "conf": "93.2%",
+      "rr": "510 ms",
+      "jpt": "-0.05 mV",
+      "isAbnormal": true,
+      "classCode": "S",
+      "probabilities": {
+        "N": 0.045,
+        "S": 0.932,
+        "V": 0.018,
+        "F": 0.005
+      }
+    },
+    {
+      "num": 24,
+      "type": "Rapid Ventricular Beat (S)",
+      "conf": "98.1%",
+      "rr": "390 ms (Tachy)",
+      "jpt": "-0.09 mV",
+      "isAbnormal": true,
+      "classCode": "S",
+      "probabilities": {
+        "N": 0.01,
+        "S": 0.981,
+        "V": 0.006,
+        "F": 0.003
+      }
+    },
+    {
+      "num": 25,
+      "type": "Atrial Fibrillation Beat (S)",
+      "conf": "97.0%",
+      "rr": "460 ms",
+      "jpt": "-0.07 mV",
+      "isAbnormal": true,
+      "classCode": "S",
+      "probabilities": {
+        "N": 0.018,
+        "S": 0.97,
+        "V": 0.009,
+        "F": 0.003
+      }
+    }
+  ]
+}

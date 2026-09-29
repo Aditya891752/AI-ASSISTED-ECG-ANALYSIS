@@ -1,0 +1,107 @@
+{
+  "id": "PT #VE-2104",
+  "name": "Marcus Aurelius Diaz",
+  "age": 52,
+  "sex": "M",
+  "bed": "Telemetry 12",
+  "primaryDiagnosis": "Frequent Ventricular Trigeminy / PVC Burden 18%",
+  "priorityTier": "Tier-2 (Urgent)",
+  "alertTitle": "FREQUENT VENTRICULAR ECTOPY SURVEILLANCE",
+  "alertDesc": "Recurring ventricular trigeminy pattern detected (two sinus beats followed by wide-complex PVC). Total 24-hr ectopic burden 18.2%. Anti-arrhythmic response being monitored.",
+  "alertType": "warning",
+  "culpritVessel": "Right Ventricular Outflow Tract (RVOT Ectopic Focus)",
+  "culpritConfidence": "96.7% Morphology Match",
+  "vitals": {
+    "hr": 76,
+    "hrStatus": "Trigeminy Pattern Active",
+    "bp": "128/82",
+    "spo2": 98,
+    "rr": 17,
+    "temp": "36.9",
+    "pr": 154,
+    "qrs": 142,
+    "qtc": 432,
+    "axis": "-42\u00b0 (LAD)",
+    "stDev": "+0.14 mV (Discordant)",
+    "stDevClass": "text-amber-400 font-bold"
+  },
+  "leadsElevated": [],
+  "leadsReciprocal": [],
+  "sampleBeats": [
+    {
+      "num": 1,
+      "type": "Sinus Rhythm Beat (N)",
+      "conf": "99.5%",
+      "rr": "790 ms",
+      "jpt": "0.00 mV",
+      "isAbnormal": false,
+      "classCode": "N",
+      "probabilities": {
+        "N": 0.995,
+        "S": 0.003,
+        "V": 0.001,
+        "F": 0.001
+      }
+    },
+    {
+      "num": 2,
+      "type": "Sinus Rhythm Beat (N)",
+      "conf": "99.3%",
+      "rr": "785 ms",
+      "jpt": "0.00 mV",
+      "isAbnormal": false,
+      "classCode": "N",
+      "probabilities": {
+        "N": 0.993,
+        "S": 0.004,
+        "V": 0.002,
+        "F": 0.001
+      }
+    },
+    {
+      "num": 3,
+      "type": "Ventricular Ectopic Complex (V)",
+      "conf": "98.2%",
+      "rr": "520 ms (Coupled)",
+      "jpt": "+0.28 mV",
+      "isAbnormal": true,
+      "classCode": "V",
+      "probabilities": {
+        "N": 0.008,
+        "S": 0.006,
+        "V": 0.982,
+        "F": 0.004
+      }
+    },
+    {
+      "num": 4,
+      "type": "Sinus Rhythm Beat (N)",
+      "conf": "99.4%",
+      "rr": "1050 ms (Compensatory)",
+      "jpt": "0.00 mV",
+      "isAbnormal": false,
+      "classCode": "N",
+      "probabilities": {
+        "N": 0.994,
+        "S": 0.003,
+        "V": 0.002,
+        "F": 0.001
+      }
+    },
+    {
+      "num": 5,
+      "type": "Sinus Rhythm Beat (N)",
+      "conf": "99.2%",
+      "rr": "792 ms",
+      "jpt": "0.00 mV",
+      "isAbnormal": false,
+      "classCode": "N",
+      "probabilities": {
+        "N": 0.992,
+        "S": 0.004,
+        "V": 0.002,
+        "F": 0.002
+      }
+    }
+  ]
+}

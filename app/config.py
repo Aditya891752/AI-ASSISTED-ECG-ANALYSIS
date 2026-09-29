@@ -24,7 +24,7 @@ class Settings(BaseSettings):
     )
 
     # ── App ───────────────────────────────────────────────────────────────────
-    app_name: str = "PS-03 ECG Screening API"
+    app_name: str = "Cardio AI ECG Screening API"
     app_version: str = "1.0.0"
     environment: Literal["development", "staging", "production"] = "development"
     debug: bool = False

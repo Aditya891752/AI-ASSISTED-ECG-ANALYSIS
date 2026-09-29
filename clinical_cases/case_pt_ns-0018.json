@@ -1,0 +1,107 @@
+{
+  "id": "PT #NS-0018",
+  "name": "Clara Oswald",
+  "age": 29,
+  "sex": "F",
+  "bed": "Outpatient Bay 03",
+  "primaryDiagnosis": "Normal Sinus Rhythm (Physiological Baseline)",
+  "priorityTier": "Tier-3 (Routine)",
+  "alertTitle": "NORMAL PHYSIOLOGICAL RHYTHM VERIFIED",
+  "alertDesc": "Normal sinus P-wave morphology preceding every QRS complex. Normal PR interval (148 ms), narrow QRS duration (84 ms), and normal corrected QT interval (404 ms). No ST elevation or depression detected.",
+  "alertType": "normal",
+  "culpritVessel": "Normal SA Nodal Conduction",
+  "culpritConfidence": "99.8% Rhythm Normalcy",
+  "vitals": {
+    "hr": 72,
+    "hrStatus": "Normal Resting Rate",
+    "bp": "118/74",
+    "spo2": 99,
+    "rr": 14,
+    "temp": "36.6",
+    "pr": 148,
+    "qrs": 84,
+    "qtc": 404,
+    "axis": "+58\u00b0",
+    "stDev": "0.00 mV",
+    "stDevClass": "text-emerald-400 font-bold"
+  },
+  "leadsElevated": [],
+  "leadsReciprocal": [],
+  "sampleBeats": [
+    {
+      "num": 1,
+      "type": "Normal Sinus (N)",
+      "conf": "99.8%",
+      "rr": "833 ms",
+      "jpt": "0.00 mV",
+      "isAbnormal": false,
+      "classCode": "N",
+      "probabilities": {
+        "N": 0.998,
+        "S": 0.001,
+        "V": 0.001,
+        "F": 0.0
+      }
+    },
+    {
+      "num": 2,
+      "type": "Normal Sinus (N)",
+      "conf": "99.9%",
+      "rr": "830 ms",
+      "jpt": "0.00 mV",
+      "isAbnormal": false,
+      "classCode": "N",
+      "probabilities": {
+        "N": 0.999,
+        "S": 0.001,
+        "V": 0.0,
+        "F": 0.0
+      }
+    },
+    {
+      "num": 3,
+      "type": "Normal Sinus (N)",
+      "conf": "99.7%",
+      "rr": "836 ms",
+      "jpt": "0.00 mV",
+      "isAbnormal": false,
+      "classCode": "N",
+      "probabilities": {
+        "N": 0.997,
+        "S": 0.002,
+        "V": 0.001,
+        "F": 0.0
+      }
+    },
+    {
+      "num": 4,
+      "type": "Normal Sinus (N)",
+      "conf": "99.8%",
+      "rr": "832 ms",
+      "jpt": "0.00 mV",
+      "isAbnormal": false,
+      "classCode": "N",
+      "probabilities": {
+        "N": 0.998,
+        "S": 0.001,
+        "V": 0.001,
+        "F": 0.0
+      }
+    },
+    {
+      "num": 5,
+      "type": "Normal Sinus (N)",
+      "conf": "99.8%",
+      "rr": "834 ms",
+      "jpt": "0.00 mV",
+      "isAbnormal": false,
+      "classCode": "N",
+      "probabilities": {
+        "N": 0.998,
+        "S": 0.001,
+        "V": 0.001,
+        "F": 0.0
+      }
+    }
+  ]
+}

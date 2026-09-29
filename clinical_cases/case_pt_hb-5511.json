@@ -1,0 +1,107 @@
+{
+  "id": "PT #HB-5511",
+  "name": "Margaret Chen-Wu",
+  "age": 76,
+  "sex": "F",
+  "bed": "Step-Down 02",
+  "primaryDiagnosis": "Complete Third-Degree Atrioventricular (AV) Block",
+  "priorityTier": "Tier-1 (Stat)",
+  "alertTitle": "COMPLETE THIRD-DEGREE HEART BLOCK WITH ESCAPE RHYTHM",
+  "alertDesc": "Complete atrioventricular dissociation between regular P waves (atrial rate 84 BPM) and narrow junctional escape complexes (ventricular rate 34 BPM). Profound bradycardia; transcutaneous pacing standby.",
+  "alertType": "critical",
+  "culpritVessel": "AV Nodal Infranodal Conduction / His-Purkinje System",
+  "culpritConfidence": "98.7% AV Dissociation Detector",
+  "vitals": {
+    "hr": 34,
+    "hrStatus": "Profound Symptomatic Bradycardia (<40)",
+    "bp": "94/58",
+    "spo2": 94,
+    "rr": 16,
+    "temp": "36.5",
+    "pr": 0,
+    "qrs": 114,
+    "qtc": 478,
+    "axis": "+15\u00b0",
+    "stDev": "0.00 mV",
+    "stDevClass": "text-rose-400 font-bold"
+  },
+  "leadsElevated": [],
+  "leadsReciprocal": [],
+  "sampleBeats": [
+    {
+      "num": 1,
+      "type": "Junctional Escape Beat (S)",
+      "conf": "97.4%",
+      "rr": "1765 ms (Severe Brady)",
+      "jpt": "0.00 mV",
+      "isAbnormal": true,
+      "classCode": "S",
+      "probabilities": {
+        "N": 0.021,
+        "S": 0.974,
+        "V": 0.003,
+        "F": 0.002
+      }
+    },
+    {
+      "num": 2,
+      "type": "Junctional Escape Beat (S)",
+      "conf": "97.8%",
+      "rr": "1760 ms (Severe Brady)",
+      "jpt": "0.00 mV",
+      "isAbnormal": true,
+      "classCode": "S",
+      "probabilities": {
+        "N": 0.018,
+        "S": 0.978,
+        "V": 0.002,
+        "F": 0.002
+      }
+    },
+    {
+      "num": 3,
+      "type": "Junctional Escape Beat (S)",
+      "conf": "98.1%",
+      "rr": "1765 ms (Severe Brady)",
+      "jpt": "0.00 mV",
+      "isAbnormal": true,
+      "classCode": "S",
+      "probabilities": {
+        "N": 0.015,
+        "S": 0.981,
+        "V": 0.002,
+        "F": 0.002
+      }
+    },
+    {
+      "num": 4,
+      "type": "Ventricular Escape Ectopic (V)",
+      "conf": "94.2%",
+      "rr": "1680 ms",
+      "jpt": "+0.08 mV",
+      "isAbnormal": true,
+      "classCode": "V",
+      "probabilities": {
+        "N": 0.025,
+        "S": 0.021,
+        "V": 0.942,
+        "F": 0.012
+      }
+    },
+    {
+      "num": 5,
+      "type": "Junctional Escape Beat (S)",
+      "conf": "97.6%",
+      "rr": "1770 ms (Severe Brady)",
+      "jpt": "0.00 mV",
+      "isAbnormal": true,
+      "classCode": "S",
+      "probabilities": {
+        "N": 0.019,
+        "S": 0.976,
+        "V": 0.003,
+        "F": 0.002
+      }
+    }
+  ]
+}

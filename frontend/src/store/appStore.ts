@@ -3,6 +3,9 @@ import { create } from "zustand";
 export type ModelOption = {
   id: string;
   label: string;
+  shortLabel: string;
+  description: string;
+  badge?: string;
   modelPath: string;
   classes: string[];
 };
@@ -10,21 +13,30 @@ export type ModelOption = {
 export const MODEL_OPTIONS: ModelOption[] = [
   {
     id: "mitbih",
-    label: "MIT-BIH (5-class)",
+    label: "MIT-BIH Arrhythmia",
+    shortLabel: "MIT-BIH",
+    description: "42k MIT-BIH beats • 5-Class AAMI Rhythm & Ectopic Screening",
+    badge: "5-Class AAMI",
     modelPath: "model/model.pkl",
     classes: ["N", "S", "V", "F", "Q"],
   },
   {
     id: "ptbdb",
-    label: "PTBDB (MI Detection)",
-    modelPath: "model/model_ptbdb_rf.pkl",
-    classes: ["NORMAL", "ABNORMAL"],
+    label: "PTB-XL 12-Lead",
+    shortLabel: "PTB-XL",
+    description: "21.8k PTB-XL records • 12-Lead Multi-Channel Infarction & Ischemia",
+    badge: "12-Lead MI",
+    modelPath: "model/model.pkl",
+    classes: ["NORM", "IMI", "ASMI", "AFIB", "PVC"],
   },
   {
     id: "combined",
-    label: "Combined (Recommended)",
-    modelPath: "model/model_combined_rf.pkl",
-    classes: ["N", "S", "V", "F", "Q", "ABNORMAL"],
+    label: "Combined Dual-Engine",
+    shortLabel: "Combined",
+    description: "Unified 75k-beat ensemble trained on MIT-BIH + PTB-XL 12-Lead",
+    badge: "Recommended",
+    modelPath: "model/model.pkl",
+    classes: ["N", "S", "V", "F", "Q"],
   },
 ];
 

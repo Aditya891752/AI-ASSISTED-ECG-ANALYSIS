@@ -1,0 +1,110 @@
+{
+  "id": "PT #BR-1804",
+  "name": "Lucian Moreau",
+  "age": 41,
+  "sex": "M",
+  "bed": "Cardiac Care 09",
+  "primaryDiagnosis": "Brugada Syndrome (Type-1 Coved Precordial ST Elevation)",
+  "priorityTier": "Tier-1 (Stat)",
+  "alertTitle": "TYPE-1 BRUGADA PATTERN (COVED ST ELEVATION \u22652.5mm)",
+  "alertDesc": "Classic coved-type ST segment elevation (+0.26 mV) followed by negative symmetric T-wave in right precordial leads V1 and V2. Severe sudden cardiac death risk; continuous telemetry and ICD evaluation indicated.",
+  "alertType": "critical",
+  "culpritVessel": "SCN5A Cardiac Sodium Channelopathy (Right Ventricular Outflow)",
+  "culpritConfidence": "96.2% Channelopathy Morphology Match",
+  "vitals": {
+    "hr": 68,
+    "hrStatus": "Resting Normal Baseline",
+    "bp": "126/80",
+    "spo2": 98,
+    "rr": 16,
+    "temp": "36.9",
+    "pr": 180,
+    "qrs": 118,
+    "qtc": 442,
+    "axis": "-10\u00b0",
+    "stDev": "+0.26 mV (Coved)",
+    "stDevClass": "text-rose-400 font-bold"
+  },
+  "leadsElevated": [
+    "V1",
+    "V2"
+  ],
+  "leadsReciprocal": [],
+  "sampleBeats": [
+    {
+      "num": 31,
+      "type": "Brugada Coved Beat (N/Brug)",
+      "conf": "96.4%",
+      "rr": "882 ms",
+      "jpt": "+0.26 mV",
+      "isAbnormal": false,
+      "classCode": "N",
+      "probabilities": {
+        "N": 0.964,
+        "S": 0.018,
+        "V": 0.012,
+        "F": 0.006
+      }
+    },
+    {
+      "num": 32,
+      "type": "Brugada Coved Beat (N/Brug)",
+      "conf": "96.8%",
+      "rr": "880 ms",
+      "jpt": "+0.26 mV",
+      "isAbnormal": false,
+      "classCode": "N",
+      "probabilities": {
+        "N": 0.968,
+        "S": 0.016,
+        "V": 0.01,
+        "F": 0.006
+      }
+    },
+    {
+      "num": 33,
+      "type": "Ventricular Ectopic Warning (V)",
+      "conf": "97.2%",
+      "rr": "510 ms (Short Coupled)",
+      "jpt": "+0.32 mV",
+      "isAbnormal": true,
+      "classCode": "V",
+      "probabilities": {
+        "N": 0.012,
+        "S": 0.008,
+        "V": 0.972,
+        "F": 0.008
+      }
+    },
+    {
+      "num": 34,
+      "type": "Compensatory Pause Beat (N)",
+      "conf": "96.1%",
+      "rr": "1210 ms (Pause)",
+      "jpt": "+0.25 mV",
+      "isAbnormal": false,
+      "classCode": "N",
+      "probabilities": {
+        "N": 0.961,
+        "S": 0.021,
+        "V": 0.012,
+        "F": 0.006
+      }
+    },
+    {
+      "num": 35,
+      "type": "Brugada Coved Beat (N/Brug)",
+      "conf": "96.5%",
+      "rr": "884 ms",
+      "jpt": "+0.26 mV",
+      "isAbnormal": false,
+      "classCode": "N",
+      "probabilities": {
+        "N": 0.965,
+        "S": 0.017,
+        "V": 0.012,
+        "F": 0.006
+      }
+    }
+  ]
+}

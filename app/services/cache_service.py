@@ -30,6 +30,8 @@ def get_redis_pool() -> aioredis.ConnectionPool:
             settings.redis_url,
             max_connections=50,
             decode_responses=True,
+            socket_connect_timeout=0.2,
+            socket_timeout=0.2,
         )
     return _pool
 
@@ -63,10 +65,14 @@ def _make_cache_key(signal_hash: str) -> str:
     return f"ecg:result:{signal_hash}"
 
 
-def hash_signal(signal: list[float]) -> str:
-    """Stable hash of a signal array for use as a cache key."""
-    raw = json.dumps(signal, separators=(",", ":")).encode()
+def hash_signal(signal: list[float] | dict[str, list[float]]) -> str:
+    """Stable hash of a signal array or multi-lead dictionary for use as a cache key."""
+    if isinstance(signal, dict):
+        raw = json.dumps({k: signal[k] for k in sorted(signal.keys())}, separators=(",", ":")).encode()
+    else:
+        raw = json.dumps(signal, separators=(",", ":")).encode()
     return hashlib.sha256(raw).hexdigest()[:32]
+
 
 
 async def get_cached_result(signal_hash: str) -> dict[str, Any] | None:
@@ -94,7 +100,7 @@ async def cache_result(
     try:
         client = get_redis_client()
         ttl = ttl or settings.result_cache_ttl
-        await client.setex(key, ttl, json.dumps(result, default=str))
+        await client.set(key, json.dumps(result, default=str), ex=ttl)
         logger.debug("Cached screening result", key=key, ttl=ttl)
     except Exception as exc:
         logger.debug("Redis cache store skipped", error=str(exc))

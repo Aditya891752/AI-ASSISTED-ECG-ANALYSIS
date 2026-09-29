@@ -1,0 +1,114 @@
+{
+  "id": "PT #VT-9912",
+  "name": "Dmitri Rostov",
+  "age": 67,
+  "sex": "M",
+  "bed": "Resus Bay 01",
+  "primaryDiagnosis": "Sustained Monomorphic Ventricular Tachycardia (MVT)",
+  "priorityTier": "Tier-1 (Stat)",
+  "alertTitle": "CRITICAL SUSTAINED VENTRICULAR TACHYCARDIA PROTOCOL",
+  "alertDesc": "Wide-complex regular tachycardia at 178 BPM with QRS duration 168ms, concordant precordial vector, and AV dissociation. Severe hemodynamic deterioration risk; prepare synchronized cardioversion.",
+  "alertType": "critical",
+  "culpritVessel": "Ventricular Re-entry Circuit (Septal/LV Apex Focus)",
+  "culpritConfidence": "99.4% Wide-Complex VT Classifier",
+  "vitals": {
+    "hr": 178,
+    "hrStatus": "Extreme Ventricular Tachycardia (>160)",
+    "bp": "88/54",
+    "spo2": 91,
+    "rr": 28,
+    "temp": "36.7",
+    "pr": 0,
+    "qrs": 168,
+    "qtc": 520,
+    "axis": "-120\u00b0 (Extreme Northwest Axis)",
+    "stDev": "-0.18 mV",
+    "stDevClass": "text-rose-400 font-bold"
+  },
+  "leadsElevated": [
+    "V1",
+    "V2",
+    "V3",
+    "V4",
+    "V5",
+    "V6"
+  ],
+  "leadsReciprocal": [],
+  "sampleBeats": [
+    {
+      "num": 41,
+      "type": "Ventricular Tachycardia Beat (V)",
+      "conf": "99.5%",
+      "rr": "337 ms (Tachy)",
+      "jpt": "-0.18 mV",
+      "isAbnormal": true,
+      "classCode": "V",
+      "probabilities": {
+        "N": 0.002,
+        "S": 0.002,
+        "V": 0.995,
+        "F": 0.001
+      }
+    },
+    {
+      "num": 42,
+      "type": "Ventricular Tachycardia Beat (V)",
+      "conf": "99.6%",
+      "rr": "338 ms (Tachy)",
+      "jpt": "-0.18 mV",
+      "isAbnormal": true,
+      "classCode": "V",
+      "probabilities": {
+        "N": 0.001,
+        "S": 0.002,
+        "V": 0.996,
+        "F": 0.001
+      }
+    },
+    {
+      "num": 43,
+      "type": "Ventricular Tachycardia Beat (V)",
+      "conf": "99.4%",
+      "rr": "336 ms (Tachy)",
+      "jpt": "-0.17 mV",
+      "isAbnormal": true,
+      "classCode": "V",
+      "probabilities": {
+        "N": 0.002,
+        "S": 0.003,
+        "V": 0.994,
+        "F": 0.001
+      }
+    },
+    {
+      "num": 44,
+      "type": "Ventricular Tachycardia Beat (V)",
+      "conf": "99.7%",
+      "rr": "337 ms (Tachy)",
+      "jpt": "-0.18 mV",
+      "isAbnormal": true,
+      "classCode": "V",
+      "probabilities": {
+        "N": 0.001,
+        "S": 0.001,
+        "V": 0.997,
+        "F": 0.001
+      }
+    },
+    {
+      "num": 45,
+      "type": "Ventricular Tachycardia Beat (V)",
+      "conf": "99.5%",
+      "rr": "337 ms (Tachy)",
+      "jpt": "-0.18 mV",
+      "isAbnormal": true,
+      "classCode": "V",
+      "probabilities": {
+        "N": 0.002,
+        "S": 0.002,
+        "V": 0.995,
+        "F": 0.001
+      }
+    }
+  ]
+}
