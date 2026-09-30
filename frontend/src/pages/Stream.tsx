@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import {
   Play,
   Square,
-  Wifi,
   WifiOff,
   Radio,
   Heart,
@@ -79,7 +78,6 @@ export function Stream() {
       if (intervalRef.current) window.clearInterval(intervalRef.current);
       if (elapsedIntervalRef.current) window.clearInterval(elapsedIntervalRef.current);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status]);
 
   const beatsAsClassifications = results.map((r) => ({

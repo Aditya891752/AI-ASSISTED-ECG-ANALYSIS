@@ -9,7 +9,7 @@ import {
   Area,
 } from "recharts";
 import type { BeatClassification } from "@/api/types";
-import { colorForLabel, nameForLabel } from "@/utils/labelColors";
+import { colorForLabel } from "@/utils/labelColors";
 import { Activity } from "lucide-react";
 
 interface ECGWaveformProps {

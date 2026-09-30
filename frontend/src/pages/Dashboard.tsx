@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAppStore, MODEL_OPTIONS } from "@/store/appStore";
 import {
@@ -8,20 +8,12 @@ import {
   ArrowRight,
   Zap,
   Grid,
-  Sliders,
   CheckCircle2,
   PauseCircle,
   PlayCircle,
   Compass,
-  Volume2,
-  VolumeX,
-  RefreshCw,
   Bell,
   BellOff,
-  Download,
-  Share2,
-  Layers,
-  ShieldCheck,
   Cpu,
   SlidersHorizontal,
   ChevronDown,
@@ -1817,7 +1809,12 @@ export function Dashboard() {
 
       {/* 7. GitHub Clinical Open-Dataset Contribution Modal */}
       {showContributionModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-200">
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="contrib-modal-title"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-200"
+        >
           <div className="relative w-full max-w-2xl bg-[#090f1d] border border-purple-500/40 rounded-3xl p-6 shadow-2xl shadow-purple-950/50 flex flex-col gap-5 max-h-[90vh] overflow-y-auto">
             {/* Header */}
             <div className="flex items-start justify-between gap-4 border-b border-white/[0.08] pb-4">
@@ -1834,7 +1831,7 @@ export function Dashboard() {
                       IEEE EMBS SCHEMA
                     </span>
                   </div>
-                  <h3 className="text-lg font-extrabold text-white font-mono mt-0.5">
+                  <h3 id="contrib-modal-title" className="text-lg font-extrabold text-white font-mono mt-0.5">
                     Contribute Case to GitHub Cohort
                   </h3>
                   <p className="text-xs text-slate-400">
@@ -1845,6 +1842,7 @@ export function Dashboard() {
 
               <button
                 onClick={() => setShowContributionModal(false)}
+                aria-label="Close contribution modal"
                 className="text-slate-400 hover:text-white p-1.5 rounded-xl hover:bg-slate-800 transition-colors cursor-pointer"
               >
                 <X className="w-5 h-5" />

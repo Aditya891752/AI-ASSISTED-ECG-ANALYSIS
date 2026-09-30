@@ -1,15 +1,10 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
 import {
   AlertTriangle,
-  ArrowRight,
   Activity,
   Heart,
-  CheckCircle2,
   ShieldAlert,
   Printer,
-  Share2,
-  Layers,
   Sparkles,
   Info,
 } from "lucide-react";

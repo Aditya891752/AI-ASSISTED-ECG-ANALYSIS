@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { UploadCloud, X, Download, Layers, CheckCircle2, AlertTriangle, ArrowRight, Activity, Zap } from "lucide-react";
+import { UploadCloud, X, Download, Layers, CheckCircle2, ArrowRight, Activity, Zap } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";

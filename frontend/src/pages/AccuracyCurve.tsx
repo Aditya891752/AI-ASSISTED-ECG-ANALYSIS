@@ -1,16 +1,11 @@
 import React, { useState } from "react";
 import {
-  TrendingUp,
   Layers,
   Upload,
   CheckCircle2,
-  AlertTriangle,
   Play,
-  Heart,
   Radar,
   Activity,
-  Zap,
-  RotateCcw,
 } from "lucide-react";
 import { apiClient } from "@/api/client";
 import { ScreeningResult } from "@/api/types";

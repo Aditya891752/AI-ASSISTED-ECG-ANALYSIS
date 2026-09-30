@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import {
   UploadCloud,
-  Wand2,
   AlertTriangle,
   CheckCircle2,
   Activity,
@@ -10,7 +9,6 @@ import {
   Clock,
   Heart,
   FileCode,
-  Sparkles,
   Sliders,
   ShieldAlert,
 } from "lucide-react";
@@ -37,7 +35,6 @@ export function Screen() {
   const [signal, setSignal] = useState<number[]>([]);
   const [sampleRate, setSampleRate] = useState(360);
   const [patientId, setPatientId] = useState("");
-  const [parseWarnings, setParseWarnings] = useState<string[]>([]);
   const [selectedBeat, setSelectedBeat] = useState<number | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -46,21 +43,24 @@ export function Screen() {
   const handleFile = async (file: File) => {
     const result = await parseSignalFile(file);
     setSignal(result.values);
-    setParseWarnings(result.errors);
+    if (result.errors.length > 0) {
+      showToast("warning", "File parsing note", result.errors.join("; "));
+    }
     showToast("info", "File loaded", `${result.values.length} samples extracted from ${file.name}`);
   };
 
   const handlePaste = (text: string) => {
     const result = parseSignalText(text);
     setSignal(result.values);
-    setParseWarnings(result.errors);
+    if (result.errors.length > 0) {
+      showToast("warning", "Parsing note", result.errors.join("; "));
+    }
   };
 
   const handleGenerateDemo = (bpm = 72) => {
     const demo = generateDemoSignal(10, 360, bpm);
     setSignal(demo);
     setSampleRate(360);
-    setParseWarnings([]);
     showToast("success", `Synthetic ECG Generated (${bpm} BPM)`, `${demo.length} samples @ 360 Hz`);
   };
 
@@ -93,7 +93,6 @@ export function Screen() {
         }
       );
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
 
   const result = screening.data;

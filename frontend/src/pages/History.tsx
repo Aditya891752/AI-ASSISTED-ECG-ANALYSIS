@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Eye, Search, Filter, Calendar, RotateCcw, ChevronLeft, ChevronRight, Activity } from "lucide-react";
+import { Eye, Filter, RotateCcw, ChevronLeft, ChevronRight, Activity } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
