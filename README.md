@@ -6,23 +6,6 @@
 
 ---
 
-## 🚀 Quick Demo (2 minutes)
-
-### Windows — double-click to run:
-```
-demo_start.bat
-```
-Opens the app at **http://localhost:5173** automatically.
-
-### Any OS — Docker (full stack):
-```bash
-docker-compose up --build
-# Open http://localhost:3000
-```
-**API Docs** — open http://localhost:8000/docs for the judges
-
----
-
 ## 🫀 What It Does
 
  classifies ECG heartbeats into **5 clinical categories** (AAMI EC57 standard):
